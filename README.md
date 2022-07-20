@@ -87,4 +87,13 @@ Run the script <code>bash announce_leaf.sh [node name]</code> to make the root a
 
 # Done
 
+# Post Scriptum
 
+The script <code>string_to_ip.sh</code> can be used to find out the wireguard IP addresses of other nodes in the network.
+
+<pre>
+$ bash string_to_ip.sh contabo
+10.65.177.6
+</pre>
+
+In the future we might implement automatically generating a dnsmasq config on the root node to enable DNS resolution (PRs welcome.)
