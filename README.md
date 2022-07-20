@@ -4,19 +4,27 @@ An experiment in making a wireguard VPN setup super easy (almost 0-conf). The on
 
 # Howto
 
-* Build the helper tool on all machines that want to take part in dynamic node setup (this includes AT LEAST the root node):
+## General setup
+
+Build the helper tool on all machines that want to take part in dynamic node setup (this includes AT LEAST the root node):
 
 <pre>go build</pre>
 
 This should have produced a binary called <code>ezvpn</code> (subject to change.)
 
-* Generate a master private key in the <code>0vpn</code> folder
+Generate a master private key:
 
 <pre>wg genkey > private</pre>
 
 Guard this key carefully. It is used to derive all other private keys. That is what allows 0vpn to be almost 0-conf.
 
-* On the root node: Copy over the <code>root.cfg.example</code> to <code>root.cfg</code> and edit it.
+## On the root node
+
+### Configuration
+
+Copy over the private key into a file called <code>private</code> in the <code>0vpn</code> directory.
+
+Copy over the <code>root.cfg.example</code> to <code>root.cfg</code> and edit it. Here it is included just as a reference:
 
 <pre>
 # The name of the root node which is used to derive its private key
@@ -34,7 +42,9 @@ root_endpoint="$root_host":"$root_port"
 static_leaf_wg_hostnames="phone"
 </pre>
 
-* On the root node: To setup the wireguard device and static peers run
+### Running
+
+To setup the wireguard device and static peers run
 
 <pre>bash setup_root.sh</pre>
 
@@ -46,14 +56,24 @@ The script will have created config files for every static leaf. In the case of 
 
 On android you can just create a new tunnel directly from this QR code and things should work.
 
-* On the root node: To listen for dynamic node additions, run the following script:
+To listen for dynamic node additions, run the following script:
 
 <pre>bash handle_leafs.sh</pre>
 
 Note that this requires privileges to configure the wireguard device.
 Note that for this to work you need the openbsd netcat version, as it's much less broken than the default debian installed netcat (PR's welcome to make this a proper daemon.)
 
-* On each dynamic leaf node
+## On each dynamic leaf node
+
+Copy <code>leaf.cfg.example</code> to <code>leaf.cfg</code> and edit it. The example is included for reference here:
+
+<pre>
+# The name of the root node
+root_hostname=contabo
+
+# The publically routable endpoint running on the root node
+root_endpoint=fps.io:4242
+</pre>
 
 Copy over the private key to <code>private</pre>
 
