@@ -75,7 +75,7 @@ root_hostname=contabo
 root_endpoint=fps.io:4242
 </pre>
 
-Copy over the private key to <code>private</pre>
+Copy over the private key to <code>private</code>
 
 Run the script <code>bash setup_leaf.sh [node name]</code> to create and setup the wireguard device.
 
