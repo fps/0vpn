@@ -8,7 +8,7 @@ ip addr add $(bash string_to_ip.sh $leaf_hostname)/8 dev wg0
 wg set wg0 private-key private_derived
 ip link set wg0 up
 
-root_private=$(go run main.go $(cat private) $root_hostname)
+root_private=$(./ezvpn $(cat private) $root_hostname)
 root_public=$(echo $root_private | wg pubkey)
 root_ip=$(bash string_to_ip.sh "$root_hostname")
 
