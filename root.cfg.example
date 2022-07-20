@@ -1,5 +1,13 @@
+# The name of the root node which is used to derive its private key
 root_wg_hostname=contabo
+
+# The publically routable address of the root node
 root_host=fps.io
 root_port=4242
 root_endpoint="$root_host":"$root_port"
+
+# Names of static leaf nodes. These must be unique
+# (including the root_wg_hostname.) These are again
+# used to derive their private keys from the master
+# private key.
 static_leaf_wg_hostnames="phone"

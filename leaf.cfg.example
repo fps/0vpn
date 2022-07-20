@@ -1,2 +1,5 @@
+# The name of the root node
 root_hostname=contabo
+
+# The publically routable endpoint running on the root node
 root_endpoint=fps.io:4242
