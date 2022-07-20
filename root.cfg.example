@@ -1,3 +1,5 @@
-root_hostname=contabo
+root_wg_hostname=contabo
+root_host=fps.io
 root_port=4242
-leaf_hostnames="nixos physalis ogfx"
+root_endpoint="$root_host":"$root_port"
+static_leaf_wg_hostnames="phone"

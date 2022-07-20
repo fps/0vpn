@@ -27,7 +27,7 @@ ip link set $device up
 
 
 echo setting up static leafs...
-for leaf in $static_leaf_hostnames; do
+for leaf in $static_leaf_wg_hostnames; do
 	leaf_private=$(go run main.go $(cat private) $leaf)
 	leaf_public=$(echo $leaf_private | wg pubkey)
 	leaf_wg_ip=$(bash string_to_ip.sh "$leaf")
