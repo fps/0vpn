@@ -37,6 +37,6 @@ for leaf in $static_leaf_hostnames; do
     echo '[Peer]' >> "$leaf.conf"
     echo "PublicKey = $(cat $TMPFILE | wg pubkey)" >> "$leaf.conf"
     echo "AllowedIps = 0.0.0.0/0" >> "$leaf.conf"
-    echo "Endpoint = $root_endpoint" >> "$leaf.conf"
+    echo "Endpoint = $root_endpoint" >> "$leaf_leaf.cfg"
 done
 
