@@ -1,0 +1,4 @@
+root_hostname=contabo
+root_endpoint=fps.io:4242
+leaf_hostname=ogfx
+
