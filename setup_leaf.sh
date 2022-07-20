@@ -1,11 +1,20 @@
 set -x
+set -e
 
+echo creating temporary file...
+TMPFILE=$(mktemp) || exit 1
+
+trap 'rm -f "$TMPFILE"' EXIT
+
+echo reading leaf config...
 source leaf.cfg
 
+echo setting up wireguard device "$device"...
+ip link delete wg0
 ip link add wg0 type wireguard
-ip addr add $(bash string_to_ip.sh $leaf_hostname)/8 dev wg0
-./ezvpn $(cat private) $leaf_hostname > private_derived
-wg set wg0 private-key private_derived
+ip addr add $(bash string_to_ip.sh $1)/8 dev wg0
+./ezvpn $(cat private) $1 > $TMPFILE
+wg set wg0 private-key $TMPFILE
 ip link set wg0 up
 
 root_private=$(./ezvpn $(cat private) $root_hostname)
