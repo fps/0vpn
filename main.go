@@ -17,6 +17,10 @@ func MixinString(masterKey ed25519.PrivateKey, hostname string) ed25519.PrivateK
 
 
 func main() {
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: ezvpn private_key hostname")
+		os.Exit(1)
+	}
 	input_key_bytes := make([]byte, 32)
 	_, err := base64.StdEncoding.Decode(input_key_bytes, []byte(os.Args[1]))
 	if (err != nil) {
