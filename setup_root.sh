@@ -13,7 +13,7 @@ wg set $device private-key private_derived
 wg set $device listen-port $root_port
 ip link set $device up
 
-for leaf in $leafs; do
+for leaf in $leaf_hostnames; do
 	leaf_private=$(go run main.go $(cat private) $leaf)
 	leaf_public=$(echo $leaf_private | wg pubkey)
 	leaf_wg_ip=$(bash string_to_ip.sh "$leaf")
