@@ -12,5 +12,5 @@ root_private=$(./ezvpn $(cat private) $root_hostname)
 root_public=$(echo $root_private | wg pubkey)
 root_ip=$(bash string_to_ip.sh "$root_hostname")
 
-wg set wg0 peer $root_public endpoint $root_endpoint persistent-keepalive 10 allowed-ips $root_ip
+wg set wg0 peer $root_public endpoint $root_endpoint persistent-keepalive 10 allowed-ips 10.0.0.0/8
 
