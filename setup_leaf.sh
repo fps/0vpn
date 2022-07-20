@@ -1,6 +1,11 @@
 set -x
 set -e
 
+# USAGE: bash setup_leaf.sh [leaf_hostname]
+# 
+# Needs privileges to create and configure a 
+# wireguard device.
+
 echo creating temporary file...
 TMPFILE=$(mktemp) || exit 1
 
