@@ -65,6 +65,8 @@ Note that for this to work you need the openbsd netcat version, as it's much les
 
 ## On each dynamic leaf node
 
+### Configuration
+
 Copy <code>leaf.cfg.example</code> to <code>leaf.cfg</code> and edit it. The example is included for reference here:
 
 <pre>
@@ -77,10 +79,12 @@ root_endpoint=fps.io:4242
 
 Copy over the private key to <code>private</code>
 
+### Running
+
 Run the script <code>bash setup_leaf.sh [node name]</code> to create and setup the wireguard device.
 
-Run the script <code>bash announce_leaf.sh [node name]</code> to make the root aware of the nnew node.
+Run the script <code>bash announce_leaf.sh [node name]</code> to make the root aware of the new node.
 
-* Done
+# Done
 
 
