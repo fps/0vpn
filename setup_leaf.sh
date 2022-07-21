@@ -5,20 +5,20 @@ set -e
 # Needs privileges to create and configure a 
 # wireguard device.
 
-echo creating temporary file...
+echo Creating temporary file...
 TMPFILE=$(mktemp) || exit 1
 
 trap 'rm -f "$TMPFILE"' EXIT
 
-echo reading leaf config...
+echo Reading leaf config...
 source leaf.cfg
 
-echo setting up wireguard device "$device"...
-echo removing old device: $(ip link delete wg0)
+echo Setting up wireguard device "$device"...
+echo Removing old device: $(ip link delete wg0)
 ip link add wg0 type wireguard
 
-leaf_ip=$(bash string_to_ip.sh "$1")/8
-echo leaf ip: "$leaf_ip"
+leaf_ip=$(bash string_to_ip.sh "$1")
+echo Leaf IP: "$leaf_ip"
 
 ip addr add "$leaf_ip" dev wg0
 ./ezvpn $(cat private) "$1" > $TMPFILE
@@ -31,6 +31,7 @@ root_ip=$(bash string_to_ip.sh "$root_hostname")
 
 wg set wg0 peer $root_public endpoint $root_endpoint persistent-keepalive 10 allowed-ips 10.0.0.0/8
 
+echo Entering leaf announcement loop
 while true; do 
 	bash announce_leaf.sh "$1"
 	sleep 10
