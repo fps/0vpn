@@ -58,6 +58,7 @@ for leaf in $static_leafs; do
     echo "Endpoint = $root_endpoint" >> "$leaf_config"
 done
 
+echo Listening for dynamic nodes...
 while true; do
 	"$my_path"/0vpn_handle_leaf_announcements "$device" "$key" "$root_public_announce_port"
 	sleep 10

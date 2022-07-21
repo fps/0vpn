@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set +e
+
 my_path=$(dirname "$0")
 
 if [ "$1" == mixin ]; then
