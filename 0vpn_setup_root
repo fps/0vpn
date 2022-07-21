@@ -57,6 +57,6 @@ for leaf in $static_leafs; do
 done
 
 while true; do
-	"$my_path"/0vpn_handle_leafs "$device" "$key" "$root_public_announce_port"
+	"$my_path"/0vpn_handle_leaf_announcements "$device" "$key" "$root_public_announce_port"
 	sleep 10
 done
