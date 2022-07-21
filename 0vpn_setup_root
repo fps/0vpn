@@ -1,36 +1,40 @@
-# set -x
+set -x
 set -e
+
+my_path=$(dirname "$0")
+
+device="$1"
+key="$2"
+root_name="$3"
+root_public_host="$4"
+root_public_port="$5"
+root_public_announce_port="$6"
+static_leafs="$7"
 
 echo creating temporary file...
 TMPFILE=$(mktemp) || exit 1
 trap 'rm -f "$TMPFILE"' EXIT
 
-echo reading root configuration...
-source root.cfg
-
-root_wg_ip=$(bash string_to_ip.sh $root_wg_hostname)/8
+root_wg_ip=$("$my_path"/0vpn_string_to_ip $root_name)/8
 echo root wg ip: $root_wg_ip
 
-device=wg0
-
 echo setting up wireguard device "$device"...
-ip link delete $device
+echo Deleting device...$(ip link delete $device)
 ip link add $device type wireguard
 ip addr add $root_wg_ip dev $device
-./0vpn-tool mixin $(cat private) $root_wg_hostname > "$TMPFILE"
+"$my_path"/0vpn-tool mixin "$key" $root_name > "$TMPFILE"
 
 echo root public key: $(cat "$TMPFILE" | wg pubkey)
 
 wg set $device private-key "$TMPFILE"
-wg set $device listen-port $root_port
+wg set $device listen-port $root_public_port
 ip link set $device up
 
-
 echo setting up static leafs...
-for leaf in $static_leaf_wg_hostnames; do
-	leaf_private=$(go run main.go $(cat private) $leaf)
+for leaf in $static_leafs; do
+	leaf_private=$("$my_path"/0vpn mixin "$key" $leaf)
 	leaf_public=$(echo $leaf_private | wg pubkey)
-	leaf_wg_ip=$(bash string_to_ip.sh "$leaf")
+	leaf_wg_ip=$("$my_path"/0vpn_string_to_ip "$leaf")
 
     echo $leaf public key: $leaf_public
     echo $leaf wg ip: $leaf_wg_ip
@@ -40,7 +44,7 @@ for leaf in $static_leaf_wg_hostnames; do
 
     leaf_config="$leaf"_leaf.cfg
 
-    echo creating qr code for static leaf "$leaf_config"...
+    echo creating config for static leaf "$leaf_config"...
     echo '[Interface]' > "$leaf_config"
     echo "PrivateKey = $leaf_private" >> "$leaf_config"
     echo "Address = $leaf_wg_ip" >> "$leaf_config"
@@ -51,6 +55,6 @@ for leaf in $static_leaf_wg_hostnames; do
 done
 
 while true; do
-	bash handle_leafs.sh
+	"$my_path"/0vpn_handle_leafs "$device" "$key" "$root_public_announce_port"
 	sleep 10
 done

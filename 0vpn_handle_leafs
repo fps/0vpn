@@ -1,21 +1,25 @@
 set +x
 
-device=wg0
+my_path=$(dirname "$0")
+
+device="$1"
+key="$2"
+root_public_announce_port="$3"
 
 IFS=' '
 
-nc -ulkp 4243 | while read line; do 
+nc -ulkp "$root_public_announce_port" | while read line; do 
     echo got line: $line;
     read -ra tokens <<< "$line"
     echo "  host: ${tokens[0]}"
     echo "  public: ${tokens[1]}"
 
     echo "  rederiving leaf public key:"
-    leaf_private=$(go run main.go $(cat private) $line)
+    leaf_private=$("$my_path"/0vpn-tool "$key" $line)
     echo "    private: $leaf_private"
     leaf_public=$(echo $leaf_private | wg pubkey)
     echo "    public: $leaf_public"
-    leaf_wg_ip=$(bash string_to_ip.sh "${tokens[0]}")
+    leaf_wg_ip=$("$my_path"/0vpn_string_to_ip "${tokens[0]}")
 
     echo "  checking if they match:"
     if [ "${tokens[1]}" == "$leaf_public" ]; then 

@@ -31,7 +31,7 @@ ip addr add "$leaf_ip" dev "$device"
 wg set "$device" private-key $TMPFILE
 ip link set "$device" up
 
-rm -rf "$TMPFILE"
+rm -f "$TMPFILE"
 
 echo Deriving root keys...
 
