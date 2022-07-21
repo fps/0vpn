@@ -25,9 +25,13 @@ ip addr add "$leaf_ip" dev wg0
 wg set wg0 private-key $TMPFILE
 ip link set wg0 up
 
-root_private=$(./ezvpn $(cat private) $root_hostname)
+echo Deriving root keys...
+
+root_private=$(./ezvpn $(cat private) $root_wg_hostname)
 root_public=$(echo $root_private | wg pubkey)
-root_ip=$(bash string_to_ip.sh "$root_hostname")
+root_ip=$(bash string_to_ip.sh "$root_wg_hostname")
+
+echo Root leaf IP: "$root_ip"
 
 wg set wg0 peer $root_public endpoint $root_endpoint persistent-keepalive 10 allowed-ips 10.0.0.0/8
 
