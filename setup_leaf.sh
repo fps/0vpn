@@ -31,11 +31,16 @@ root_private=$(./ezvpn $(cat private) $root_wg_hostname)
 root_public=$(echo $root_private | wg pubkey)
 root_ip=$(bash string_to_ip.sh "$root_wg_hostname")
 
+echo Root public key: "$root_public"
 echo Root leaf IP: "$root_ip"
 
+echo Setting up root node endpoint...
 wg set wg0 peer $root_public endpoint $root_endpoint persistent-keepalive 10 allowed-ips 10.0.0.0/8
 
-echo Entering leaf announcement loop
+echo Final wireguard config:
+wg show wg0
+
+echo Entering leaf announcement loop...
 while true; do 
 	bash announce_leaf.sh "$1"
 	sleep "$announce_interval"
