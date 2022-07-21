@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set +x
+set +e
 
 my_path=$(dirname "$0")
 
@@ -11,21 +12,23 @@ root_public_announce_port="$3"
 IFS=' '
 
 nc -ulkp "$root_public_announce_port" | while read line; do 
-    echo got line: $line;
+    echo Got line: $line;
     read -ra tokens <<< "$line"
     echo "  host: ${tokens[0]}"
     echo "  public: ${tokens[1]}"
+    host=${tokens[0]}
+    public=${tokens[1]}
 
-    echo "  rederiving leaf public key:"
-    leaf_private=$("$my_path"/0vpn-tool "$key" $line)
-    echo "    private: $leaf_private"
+    echo "  Rederiving leaf public key from key "$key" and host "$host":"
+    leaf_private=$("$my_path"/0vpn-tool mixin "$key" "$host")
+    echo "    Private: $leaf_private"
     leaf_public=$(echo $leaf_private | wg pubkey)
-    echo "    public: $leaf_public"
-    leaf_wg_ip=$("$my_path"/0vpn_string_to_ip "${tokens[0]}")
+    echo "    Public: $leaf_public"
+    leaf_wg_ip=$("$my_path"/0vpn_string_to_ip "$host")
 
-    echo "  checking if they match:"
+    echo "  Checking if they match:"
     if [ "${tokens[1]}" == "$leaf_public" ]; then 
-        echo "  match! adding the leaf..."
+        echo "  Match! adding the leaf..."
         wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
     else
         echo "  key mismatch. not adding leaf..."
