@@ -16,19 +16,18 @@ func MixinString(masterKey ed25519.PrivateKey, hostname string) ed25519.PrivateK
 }
 
 func main() {
-	if len(os.Args) < 4 {
+	if len(os.Args) < 4 || os.Args[1] == "help" {
 		fmt.Println("Usage: 0vpn command [arguments]")
 		fmt.Println("")
 		fmt.Println("where command can be one of the following:")
 		fmt.Println("")
+		fmt.Println("help")
+		fmt.Println("    show this help text")
+		fmt.Println("")
 		fmt.Println("mixin [key] [string]")
-		fmt.Println("   derive a new key by mixing in string")
+		fmt.Println("   Derive a new key by mixing in string")
 		fmt.Println("   into key and output the new key to stdout")
 		fmt.Println("")
-		fmt.Println("resolve [network] [string]")
-		fmt.Println("   hash [string] into an IP address")
-		fmt.Println("   and output the IP address to stdout")
-		fmt.Println("   [network] example: 10.10.0.0/16")
 		os.Exit(1)
 	}
 

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+my_path=$(dirname "$0")
+
+if [ "$1" == mixin ]; then
+	"$my_path"/0vpn-tool mixin "$2" "$3"
+fi
+
+if [ "$1" == resolve ]; then
+	bash "$my_path"/string_to_ip.sh "$2" 
+fi

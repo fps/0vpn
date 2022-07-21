@@ -17,7 +17,7 @@ echo setting up wireguard device "$device"...
 ip link delete $device
 ip link add $device type wireguard
 ip addr add $root_wg_ip dev $device
-./0vpn mixin $(cat private) $root_wg_hostname > "$TMPFILE"
+./0vpn-tool mixin $(cat private) $root_wg_hostname > "$TMPFILE"
 
 echo root public key: $(cat "$TMPFILE" | wg pubkey)
 

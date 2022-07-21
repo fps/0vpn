@@ -21,13 +21,13 @@ leaf_ip=$(bash string_to_ip.sh "$1")
 echo Leaf IP: "$leaf_ip"
 
 ip addr add "$leaf_ip" dev wg0
-./0vpn mixin $(cat private) "$1" > $TMPFILE
+./0vpn-tool mixin $(cat private) "$1" > $TMPFILE
 wg set wg0 private-key $TMPFILE
 ip link set wg0 up
 
 echo Deriving root keys...
 
-root_private=$(./0vpn mixin $(cat private) $root_wg_hostname)
+root_private=$(./0vpn-tool mixin $(cat private) $root_wg_hostname)
 root_public=$(echo $root_private | wg pubkey)
 root_ip=$(bash string_to_ip.sh "$root_wg_hostname")
 
