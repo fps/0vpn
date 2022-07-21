@@ -1,8 +1,0 @@
-# Include the configuration that's common to root and leafs
-source common.cfg
-
-# Names of static leaf nodes. These must be unique
-# (including the root_wg_hostname.) These are again
-# used to derive their private keys from the master
-# private key.
-static_leaf_wg_hostnames="phone desktop_home"

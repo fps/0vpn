@@ -1,7 +1,0 @@
-# The name of the root node which is used to derive its private key
-root_wg_hostname=root
-
-# The publically routable address of the root node
-root_host=example.com
-root_port=1234
-root_endpoint="$root_host":"$root_port"

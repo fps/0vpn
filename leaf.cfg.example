@@ -1,4 +1,0 @@
-# Include configuration that's common to root and leafs
-source common.cfg
-
-announce_interval=10
