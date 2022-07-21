@@ -15,7 +15,7 @@ Build the helper tool on all machines that want to take part in dynamic node set
 
 <pre>go build</pre>
 
-This should have produced a binary called <code>ezvpn</code> (subject to change.)
+This should have produced a binary called <code>0vpn</code> (subject to change.)
 
 Generate a master private key:
 
