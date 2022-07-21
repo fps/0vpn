@@ -1,7 +1,4 @@
 # Include configuration that's common to root and leafs
 source common.cfg
 
-root_hostname=contabo
-
-# The publically routable endpoint running on the root node
-root_endpoint=fps.io:4242
+announce_interval=10

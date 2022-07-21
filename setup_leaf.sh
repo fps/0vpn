@@ -34,5 +34,5 @@ wg set wg0 peer $root_public endpoint $root_endpoint persistent-keepalive 10 all
 echo Entering leaf announcement loop
 while true; do 
 	bash announce_leaf.sh "$1"
-	sleep 10
+	sleep "$announce_interval"
 done
