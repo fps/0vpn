@@ -1,2 +1,3 @@
-echo $1 $(echo $(./ezvpn $(cat private) $1) | wg pubkey) | nc -q0 -u fps.io 4243
+echo Announcing leaf to root node.
+echo $1 $(echo $(./ezvpn $(cat private) $1) | wg pubkey) > /dev/udp/fps.io/4243
 

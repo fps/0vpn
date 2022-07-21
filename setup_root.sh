@@ -50,3 +50,7 @@ for leaf in $static_leaf_wg_hostnames; do
     echo "Endpoint = $root_endpoint" >> "$leaf_config"
 done
 
+while true; do
+	bash handle_leafs.sh
+	sleep 10
+done
