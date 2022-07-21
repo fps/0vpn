@@ -6,5 +6,15 @@ if [ "$1" == mixin ]; then
 fi
 
 if [ "$1" == resolve ]; then
-	bash "$my_path"/string_to_ip.sh "$2" 
+	bash "$my_path"/0vpn_string_to_ip "$2" 
+fi
+
+if [ "$1" == root ]; then
+	bash "$my_path"/0vpn_setup_root "$2"    "$3" "$4"        "$5"              "$6"              "$7"
+    #                                device  key  root_name   root_public_host  root_public port  root_public_announce_port  
+fi
+
+if [ "$1" == leaf ]; then
+	bash "$my_path"/0vpn_setup_leaf "$2"    "$3" "$4"        "$5"              "$6"              "$7"                       "$8"              "$9"
+    #                                device  key  root_name   root_public_host  root_public port  root_public_announce_port  annunce_interval  leaf_name
 fi
