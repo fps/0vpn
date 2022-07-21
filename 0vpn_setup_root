@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-set -x
 set -e
 
 my_path=$(dirname "$0")
@@ -31,6 +30,9 @@ echo root public key: $(cat "$TMPFILE" | wg pubkey)
 wg set $device private-key "$TMPFILE"
 wg set $device listen-port $root_public_port
 ip link set $device up
+
+echo Output of wg show "$device":
+wg show "$device"
 
 echo setting up static leafs...
 for leaf in $static_leafs; do
