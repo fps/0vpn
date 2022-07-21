@@ -2,6 +2,11 @@
 
 An experiment in making a wireguard VPN setup super easy (almost 0-conf). The only supported topology right now is the root-and-leafs (spokes-and-hub) topology.
 
+# Requirements
+
+* netcat-openbsd (it won't work with the traditional netcat)
+* wireguard-tools 
+
 # Howto
 
 ## General setup
@@ -24,23 +29,9 @@ Guard this key carefully. It is used to derive all other private keys. That is w
 
 Copy over the private key into a file called <code>private</code> in the <code>0vpn</code> directory.
 
-Copy over the <code>root.cfg.example</code> to <code>root.cfg</code> and edit it. Here it is included just as a reference:
+Copy over <code>common.cfg.example</code> to <code>common.cfg</code> and edit it according to your setup.
 
-<pre>
-# The name of the root node which is used to derive its private key
-root_wg_hostname=contabo
-
-# The publically routable address of the root node
-root_host=fps.io
-root_port=4242
-root_endpoint="$root_host":"$root_port"
-
-# Names of static leaf nodes. These must be unique
-# (including the root_wg_hostname.) These are again
-# used to derive their private keys from the master
-# private key.
-static_leaf_wg_hostnames="phone"
-</pre>
+Copy over <code>root.cfg.example</code> to <code>root.cfg</code> and edit it according to your setup.
 
 ### Running
 
@@ -56,10 +47,6 @@ The script will have created config files for every static leaf. In the case of 
 
 On android you can just create a new tunnel directly from this QR code and things should work.
 
-To listen for dynamic node additions, run the following script:
-
-<pre>bash handle_leafs.sh</pre>
-
 Note that this requires privileges to configure the wireguard device.
 Note that for this to work you need the openbsd netcat version, as it's much less broken than the default debian installed netcat (PR's welcome to make this a proper daemon.)
 
@@ -67,23 +54,15 @@ Note that for this to work you need the openbsd netcat version, as it's much les
 
 ### Configuration
 
-Copy <code>leaf.cfg.example</code> to <code>leaf.cfg</code> and edit it. The example is included for reference here:
+Copy <code>common.cfg.example</code> to <code>common.cfg</code> and edit it according to your needs.
 
-<pre>
-# The name of the root node
-root_hostname=contabo
-
-# The publically routable endpoint running on the root node
-root_endpoint=fps.io:4242
-</pre>
+Copy <code>leaf.cfg.example</code> to <code>leaf.cfg</code> and edit it if needed.
 
 Copy over the private key to <code>private</code>
 
 ### Running
 
-Run the script <code>bash setup_leaf.sh [node name]</code> to create and setup the wireguard device.
-
-Run the script <code>bash announce_leaf.sh [node name]</code> to make the root aware of the new node.
+Run the script <code>bash setup_leaf.sh [node name]</code> to create and setup the wireguard device and announce the leaf node to the root node.
 
 # Done
 
