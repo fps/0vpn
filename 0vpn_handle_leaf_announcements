@@ -19,12 +19,13 @@ nc -ulkp "$root_public_announce_port" | while read line; do
     host=${tokens[0]}
     public=${tokens[1]}
 
-    echo "  Rederiving leaf public key from key "$key" and host "$host":"
+    echo "  Rederiving leaf public key..."
     leaf_private=$("$my_path"/0vpn-tool mixin "$key" "$host")
-    echo "    Private: $leaf_private"
+    # echo "    Private: $leaf_private"
     leaf_public=$(echo $leaf_private | wg pubkey)
     echo "    Public: $leaf_public"
     leaf_wg_ip=$("$my_path"/0vpn_string_to_ip "$host")
+    echo "    Leaf IP: $leaf_wg_ip"
 
     echo "  Checking if they match:"
     if [ "${tokens[1]}" == "$leaf_public" ]; then 
