@@ -29,7 +29,7 @@ Guard this key carefully. It is used to derive all other private keys. That is w
 
 To setup the wireguard device and static peers run
 
-<pre>./0vpn root [device] [key] [root_name] [root_public_host] [root_public_port] [root_public_annouce_port] [static_leafs]</pre>
+<pre>./0vpn root [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [static_leafs]</pre>
 
 Note that this requires privileges to create and configure the wireguard device.
 
@@ -54,7 +54,7 @@ Copy over the private key to <code>private</code>
 
 ### Running
 
-<pre>./0vpn leaf [device] [key] [root_name] [root_public_host] [root_public_port] [root_public_annouce_port] [persistent_keepalive] [leaf_name]</pre>
+<pre>./0vpn leaf [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [persistent_keepalive] [leaf_name]</pre>
 
 # Done
 
