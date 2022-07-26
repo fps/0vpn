@@ -25,25 +25,17 @@ Guard this key carefully. It is used to derive all other private keys. That is w
 
 ## On the root node
 
-### Configuration
-
-Copy over the private key into a file called <code>private</code> in the <code>0vpn</code> directory.
-
-Copy over <code>common.cfg.example</code> to <code>common.cfg</code> and edit it according to your setup.
-
-Copy over <code>root.cfg.example</code> to <code>root.cfg</code> and edit it according to your setup.
-
 ### Running
 
 To setup the wireguard device and static peers run
 
-<pre>bash setup_root.sh</pre>
+<pre>./0vpn root [device] [key] [root_name] [root_public_host] [root_public_port] [root_public_annouce_port] [static_leafs]</pre>
 
 Note that this requires privileges to create and configure the wireguard device.
 
 The script will have created config files for every static leaf. In the case of the example config that would be <code>phone_leaf.cfg</code>. You can generate a QR code and display it in the terminal with
 
-<pre>qrencode -t ansiutf8 < phone_leaf.cfg</pre>
+<pre>0vpn_show_qr phone_leaf.cfg</pre>
 
 On android you can just create a new tunnel directly from this QR code and things should work.
 
@@ -62,17 +54,17 @@ Copy over the private key to <code>private</code>
 
 ### Running
 
-Run the script <code>bash setup_leaf.sh [node name]</code> to create and setup the wireguard device and announce the leaf node to the root node.
+<pre>./0vpn leaf [device] [key] [root_name] [root_public_host] [root_public_port] [root_public_annouce_port] [persistent_keepalive] [leaf_name]</pre>
 
 # Done
 
 # Post Scriptum
 
-The script <code>string_to_ip.sh</code> can be used to find out the wireguard IP addresses of other nodes in the network.
+The command <code>0vpn resolve [name]</code> can be used to find out the wireguard IP addresses of other nodes in the network.
 
 <pre>
-$ bash string_to_ip.sh contabo
-10.65.177.6
+$ 0vpn resolve contabo
+10.123.65.177
 </pre>
 
 In the future we might implement automatically generating a dnsmasq config on the root node to enable DNS resolution (PRs welcome.)
