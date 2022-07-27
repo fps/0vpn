@@ -10,6 +10,7 @@ We give up security for convenience:
 * Leaf nodes can dynamically announce the wish to partake in the VPN by sending their node name and their (derived) public key. The root node listens on an extra UDP port for these announcements.
 * The root node can rederive the leaf node's key and check for the correctness of the transmitted public key.
 * If those check out the lead node's public key is added to the peers list.
+* IP addresses are derived from the node's names in the 10.123.0.0/16 subnet. So they must be unique and there might be collisions which will make stuff not work well.
 
 # Requirements
 
