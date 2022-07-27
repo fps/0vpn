@@ -2,6 +2,15 @@
 
 An experiment in making a wireguard VPN setup super easy (almost 0-conf). The only supported topology right now is the root-and-leafs (spokes-and-hub) topology.
 
+## How does it work?
+
+We give up security for convenience:
+
+* There is a central "master" private key from which all other keys are derived by XOR'ing in the nodes name.
+* Leaf nodes can dynamically announce the wish to partake in the VPN by sending their node name and their (derived) public key. The root node listens on an extra UDP port for these announcements.
+* The root node can rederive the leaf node's key and check for the correctness of the transmitted public key.
+* If those check out the lead node's public key is added to the peers list.
+
 # Requirements
 
 * netcat-openbsd (it won't work with the traditional netcat)
@@ -31,6 +40,17 @@ To setup the wireguard device and static peers run
 
 <pre>./0vpn root [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [static_leafs]</pre>
 
+where:
+
+<pre>
+[device]:             A name for the wireguard device created (example: wg0)
+[root_name]:          The name of the root node. Example: myroot
+[root_host]:          The publically routable hostname of the root node. Example: example.com
+[root_port]:          The port on the root_host where the wireguard endpoint lives. Example: 4242
+[root_announce_port]: The port the root node listens on for dynamic leaf node addition announcements. Example: 4243
+[static_leafs]:       A single string containing leaf node names that are added as peers without dynamic announcement. Example: "my_phone my_desktop my_laptop"
+<pre>
+
 Note that this requires privileges to create and configure the wireguard device.
 
 The script will have created config files for every static leaf. In the case of the example config that would be <code>phone_leaf.cfg</code>. You can generate a QR code and display it in the terminal with
@@ -44,17 +64,16 @@ Note that for this to work you need the openbsd netcat version, as it's much les
 
 ## On each dynamic leaf node
 
-### Configuration
-
-Copy <code>common.cfg.example</code> to <code>common.cfg</code> and edit it according to your needs.
-
-Copy <code>leaf.cfg.example</code> to <code>leaf.cfg</code> and edit it if needed.
-
-Copy over the private key to <code>private</code>
-
 ### Running
 
 <pre>./0vpn leaf [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [persistent_keepalive] [leaf_name]</pre>
+
+where:
+
+<pre>
+[persistent_keepalive]: Number of seconds after which to send keepalive packets
+[leaf_name]:            The name of the leaf
+<pre>
 
 # Done
 
