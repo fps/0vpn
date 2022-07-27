@@ -74,7 +74,7 @@ where all parameters have to be the same as for the root node (except for the de
 <pre>
 [persistent_keepalive]: Number of seconds after which to send keepalive packets
 [leaf_name]:            The name of the leaf
-<pre>
+</pre>
 
 # Done
 
