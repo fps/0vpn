@@ -44,6 +44,7 @@ where:
 
 <pre>
 [device]:             A name for the wireguard device created (example: wg0)
+[key]:                The "master" private key from which all other keys are derived
 [root_name]:          The name of the root node. Example: myroot
 [root_host]:          The publically routable hostname of the root node. Example: example.com
 [root_port]:          The port on the root_host where the wireguard endpoint lives. Example: 4242
