@@ -14,8 +14,17 @@ We give up security for convenience:
 
 # Requirements
 
+## On the root node
+
 * netcat-openbsd (it won't work with the traditional netcat)
+
+## On dynamic leafs
+
 * wireguard-tools 
+
+## On static leafs
+
+* wireguard in some form or other (wireguard-android, wireguard-windows)
 
 # Howto
 
