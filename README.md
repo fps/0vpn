@@ -50,7 +50,7 @@ where:
 [root_port]:          The port on the root_host where the wireguard endpoint lives. Example: 4242
 [root_announce_port]: The port the root node listens on for dynamic leaf node addition announcements. Example: 4243
 [static_leafs]:       A single string containing leaf node names that are added as peers without dynamic announcement. Example: "my_phone my_desktop my_laptop"
-<pre>
+</pre>
 
 Note that this requires privileges to create and configure the wireguard device.
 
