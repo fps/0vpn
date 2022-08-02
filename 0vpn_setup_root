@@ -16,8 +16,10 @@ echo Creating temporary file...
 TMPFILE=$(mktemp) || exit 1
 trap 'rm -f "$TMPFILE"' EXIT
 
-root_wg_ip=$("$my_path"/0vpn_string_to_ip $root_name)/8
+root_wg_ip=$("$my_path"/0vpn_string_to_ip $root_name)
 echo root wg ip: $root_wg_ip
+
+echo "$root_wg_ip" "$root_name".internal > hosts/"$root_name"
 
 echo Setting up wireguard device "$device"...
 echo Deleting device...$(ip link delete $device)
@@ -61,6 +63,8 @@ for leaf in $static_leafs; do
     echo "AllowedIps = 10.123.0.0/16" >> "$leaf_config"
     echo "Endpoint = $root_public_host:$root_public_port" >> "$leaf_config"
     echo "PersistentKeepalive = 10" >> "$leaf_config"
+    echo "    Creating hosts entry..."
+    echo "$leaf_wg_ip" "$leaf.internal" > hosts/"$leaf"
 done
 
 echo Listening for dynamic nodes...
