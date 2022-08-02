@@ -19,7 +19,8 @@ trap 'rm -f "$TMPFILE"' EXIT
 root_wg_ip=$("$my_path"/0vpn_string_to_ip $root_name)
 echo root wg ip: $root_wg_ip
 
-echo "$root_wg_ip" "$root_name".internal > hosts/"$root_name"
+mkdir -p "$my_path"/hosts
+echo "$root_wg_ip" "$root_name".internal > "$my_path"/hosts/"$root_name"
 
 echo Setting up wireguard device "$device"...
 echo Deleting device...$(ip link delete $device)
