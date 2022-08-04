@@ -59,6 +59,7 @@ for leaf in $static_leafs; do
     echo '[Interface]' > "$leaf_config"
     echo "PrivateKey = $leaf_private" >> "$leaf_config"
     echo "Address = $leaf_wg_ip" >> "$leaf_config"
+    echo "DNS = $root_wg_ip, internal" >> "$leaf_config"
     echo '[Peer]' >> "$leaf_config"
     echo "PublicKey = $(cat $TMPFILE | wg pubkey)" >> "$leaf_config"
     echo "AllowedIps = 10.123.0.0/16" >> "$leaf_config"
