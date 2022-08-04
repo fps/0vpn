@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"bufio"
+	"io/ioutil"
 )
 
 func MixinString(masterKey ed25519.PrivateKey, hostname string) ed25519.PrivateKey {
@@ -25,13 +26,14 @@ func print_usage() {
 	fmt.Println("help")
 	fmt.Println("    show this help text")
 	fmt.Println("")
-	fmt.Println("mixin [key] [string]")
+	fmt.Println("mixin [key-file] [string]")
 	fmt.Println("   Derive a new key by mixing in string")
 	fmt.Println("   into key and output the new key to stdout")
 	fmt.Println("")
 	fmt.Println("key-from-password")
 	fmt.Println("   Derive a key from a password given at")
 	fmt.Println("   stdin and output the new key to stdout")
+	fmt.Println("")
 }
 
 func main() {
@@ -42,7 +44,13 @@ func main() {
 
 	if os.Args[1] == "mixin" && len(os.Args) == 4 {
 		input_key_bytes := make([]byte, 32)
-		_, err := base64.StdEncoding.Decode(input_key_bytes, []byte(os.Args[2]))
+		input_file_bytes, err := ioutil.ReadFile(os.Args[2])
+		if err != nil {
+			fmt.Println("Failed to read key-file")
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		_, err = base64.StdEncoding.Decode(input_key_bytes, input_file_bytes)
 		if err != nil {
 			fmt.Println("Failed to decode key")
 			fmt.Println(err)
