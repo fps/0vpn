@@ -6,7 +6,7 @@ set +e
 my_path=$(dirname "$0")
 
 device="$1"
-key="$2"
+keyfile="$2"
 root_public_announce_port="$3"
 
 IFS=' '
@@ -20,7 +20,7 @@ nc -ulkp "$root_public_announce_port" | while read line; do
     public=${tokens[1]}
 
     echo "  Rederiving leaf public key..."
-    leaf_private=$("$my_path"/0vpn-tool mixin "$key" "$host")
+    leaf_private=$("$my_path"/0vpn-tool mixin "$keyfile" "$host")
     # echo "    Private: $leaf_private"
     leaf_public=$(echo $leaf_private | wg pubkey)
     echo "    Public: $leaf_public"

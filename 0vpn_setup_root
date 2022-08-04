@@ -5,7 +5,7 @@ set -e
 my_path=$(dirname "$0")
 
 device="$1"
-key="$2"
+keyfile="$2"
 root_name="$3"
 root_public_host="$4"
 root_public_port="$5"
@@ -26,7 +26,7 @@ echo Setting up wireguard device "$device"...
 echo Deleting device...$(ip link delete $device)
 ip link add $device type wireguard
 ip addr add $root_wg_ip dev $device
-"$my_path"/0vpn-tool mixin "$key" $root_name > "$TMPFILE"
+"$my_path"/0vpn-tool mixin "$keyfile" $root_name > "$TMPFILE"
 
 echo Root public key: $(cat "$TMPFILE" | wg pubkey)
 
@@ -43,7 +43,7 @@ ip route add 10.123.0.0/16 dev wg0
 echo Setting up static leafs...
 for leaf in $static_leafs; do
     echo "  Leaf: $leaf"
-	leaf_private=$("$my_path"/0vpn mixin "$key" $leaf)
+	leaf_private=$("$my_path"/0vpn-tool mixin "$keyfile" $leaf)
 	leaf_public=$(echo $leaf_private | wg pubkey)
 	leaf_wg_ip=$("$my_path"/0vpn_string_to_ip "$leaf")
 
@@ -70,6 +70,6 @@ done
 
 echo Listening for dynamic nodes...
 while true; do
-	"$my_path"/0vpn_handle_leaf_announcements "$device" "$key" "$root_public_announce_port"
+	"$my_path"/0vpn_handle_leaf_announcements "$device" "$keyfile" "$root_public_announce_port"
 	sleep 10
 done
