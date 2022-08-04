@@ -15,8 +15,8 @@ leaf_name="$8"
 
 echo Creating temporary file...
 TMPFILE=$(mktemp) || exit 1
-
-trap 'rm -f "$TMPFILE"' EXIT
+echo tmpfile: "$TMPFILE"
+trap 'echo Cleaning up...; rm -f "$TMPFILE"' EXIT
 
 echo Setting up wireguard device "$device"...
 echo Removing old device... $(ip link delete "$device")
