@@ -58,8 +58,13 @@ func main() {
 		}
 		input_key := ed25519.PrivateKey(input_key_bytes)
 
-		mixed_key := MixinString(input_key, os.Args[3])
-
+		// mixed_key := MixinString(input_key, os.Args[3])
+		mixed_key, err := scrypt.Key([]byte(os.Args[3]), input_key, 32768, 8, 1, 32)
+		if err != nil {
+			fmt.Println("Failed to derive key")
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		fmt.Println(base64.StdEncoding.EncodeToString(mixed_key[0:32]))
 		os.Exit(0)
 	}
