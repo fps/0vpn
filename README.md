@@ -17,13 +17,16 @@ We give up security for convenience:
 ## On the root node
 
 * netcat-openbsd (it won't work with the traditional netcat)
+* dnsmasq
 * wireguard-tools
 * bash
+* core utilities like cat, kill, mktemp, etc..
 
 ## On dynamic leafs
 
 * wireguard-tools
 * bash
+* core utilities like cat, kill, mktemp, etc..
 
 ## On static leafs
 
@@ -100,4 +103,3 @@ $ 0vpn resolve contabo
 10.123.65.177
 </pre>
 
-In the future we might implement automatically generating a dnsmasq config on the root node to enable DNS resolution (PRs welcome.)
