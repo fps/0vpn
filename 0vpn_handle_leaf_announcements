@@ -8,6 +8,7 @@ my_path=$(dirname "$0")
 device="$1"
 keyfile="$2"
 root_public_announce_port="$3"
+tmpdir="$4"
 
 IFS=' '
 
@@ -31,7 +32,8 @@ nc -ulkp "$root_public_announce_port" | while read line; do
     if [ "${tokens[1]}" == "$leaf_public" ]; then 
         echo "  Match! adding the leaf..."
         wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
-        echo "$leaf_wg_ip" "$host".internal > "$my_path"/hosts/"$host"
+        echo "$leaf_wg_ip" "$host".internal > "$tmpdir"/hosts/"$host"
+        kill -SIGHUP $(cat "$tmpdir/dnsmasq.pid")
     else
         echo "  key mismatch. not adding leaf..."
     fi

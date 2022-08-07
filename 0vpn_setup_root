@@ -14,7 +14,18 @@ static_leafs="$7"
 
 echo Creating temporary file...
 TMPFILE=$(mktemp) || exit 1
-trap 'rm -f "$TMPFILE"' EXIT
+
+echo TMPFILE is "$TMPFILE"
+
+TMPDIR=$(mktemp -d) || exit 1
+
+echo TMPDIR is "$TMPDIR"
+
+mkdir "$TMPDIR/hosts"
+
+chmod -R 755 "$TMPDIR"
+
+trap 'kill $(cat "$TMPDIR/dnsmasq.pid"); rm -f "$TMPFILE"; rm -rf "$TMPDIR"' EXIT
 
 root_wg_ip=$("$my_path"/0vpn_string_to_ip $root_name)
 echo root wg ip: $root_wg_ip
@@ -66,11 +77,16 @@ for leaf in $static_leafs; do
     echo "Endpoint = $root_public_host:$root_public_port" >> "$leaf_config"
     echo "PersistentKeepalive = 10" >> "$leaf_config"
     echo "    Creating hosts entry..."
-    echo "$leaf_wg_ip" "$leaf.internal" > "$my_path"/hosts/"$leaf"
+    echo "$leaf_wg_ip" "$leaf.internal" > "$TMPDIR"/hosts/"$leaf"
 done
+
+echo Starting dnsmasq...
+touch "$TMPDIR/dnsmasq.conf"
+dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p 53 --interface=wg0 -q --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface=wg0 
+
 
 echo Listening for dynamic nodes...
 while true; do
-	"$my_path"/0vpn_handle_leaf_announcements "$device" "$keyfile" "$root_public_announce_port"
+	"$my_path"/0vpn_handle_leaf_announcements "$device" "$keyfile" "$root_public_announce_port" "$TMPDIR"
 	sleep 10
 done
