@@ -13,27 +13,28 @@ tmpdir="$4"
 IFS=' '
 
 nc -ulkp "$root_public_announce_port" | while read line; do 
-    echo Got line: $line;
+    # echo Got line: $line;
     read -ra tokens <<< "$line"
-    echo "  host: ${tokens[0]}"
-    echo "  public: ${tokens[1]}"
+    echo "  host: ${tokens[0]}  public: ${tokens[1]}"
     host=${tokens[0]}
     public=${tokens[1]}
 
-    echo "  Rederiving leaf public key..."
     leaf_private=$("$my_path"/0vpn-tool mixin "$keyfile" "$host")
     # echo "    Private: $leaf_private"
     leaf_public=$(echo $leaf_private | wg pubkey)
-    echo "    Public: $leaf_public"
     leaf_wg_ip=$("$my_path"/0vpn-resolve "$host")
-    echo "    Leaf IP: $leaf_wg_ip"
+    echo "    Public: $leaf_public  Leaf IP: $leaf_wg_ip"
 
-    echo "  Checking if they match:"
+    # echo "  Checking if they match:"
     if [ "${tokens[1]}" == "$leaf_public" ]; then 
-        echo "  Match! adding the leaf..."
-        wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
-        echo "$leaf_wg_ip" "$host".internal > "$tmpdir"/hosts/"$host"
-        kill -SIGHUP $(cat "$tmpdir/dnsmasq.pid")
+        if test -f "$tmpdir"/hosts/"$host"; then
+            echo "  Already announced"
+        else
+            echo "  Match! adding the leaf..."
+            wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
+            echo "$leaf_wg_ip" "$host".internal > "$tmpdir"/hosts/"$host"
+            kill -SIGHUP $(cat "$tmpdir/dnsmasq.pid")
+        fi
     else
         echo "  key mismatch. not adding leaf..."
     fi
