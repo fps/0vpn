@@ -49,7 +49,7 @@ echo Output of wg show "$device":
 wg show "$device"
 
 echo Adding route...
-ip route add 10.123.0.0/16 dev wg0
+ip route add 10.123.0.0/16 dev "$device"
 
 echo Setting up static leafs...
 for leaf in $static_leafs; do
@@ -82,7 +82,7 @@ done
 
 echo Starting dnsmasq...
 touch "$TMPDIR/dnsmasq.conf"
-dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p 53 --interface=wg0 -q --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface=wg0 
+dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p 53 -q --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$device"
 
 
 echo Listening for dynamic nodes...
