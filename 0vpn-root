@@ -30,8 +30,7 @@ trap 'kill $(cat "$TMPDIR/dnsmasq.pid"); rm -f "$TMPFILE"; rm -rf "$TMPDIR"' EXI
 root_wg_ip=$("$my_path"/0vpn-resolve $root_name)
 echo root wg ip: $root_wg_ip
 
-mkdir -p "$my_path"/hosts
-echo "$root_wg_ip" "$root_name".internal > "$my_path"/hosts/"$root_name"
+echo "$root_wg_ip" "$root_name".internal > "$TMPDIR"/hosts/"$root_name"
 
 echo Setting up wireguard device "$device"...
 echo Deleting device...$(ip link delete $device)
@@ -82,7 +81,7 @@ done
 
 echo Starting dnsmasq...
 touch "$TMPDIR/dnsmasq.conf"
-dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p 53 -q --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$device"
+dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p 53 --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$device"
 
 
 echo Listening for dynamic nodes...
