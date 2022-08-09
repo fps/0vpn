@@ -22,7 +22,7 @@ echo Setting up wireguard device "$device"...
 echo Removing old device... $(ip link delete "$device")
 ip link add "$device" type wireguard
 
-leaf_ip=$("$my_path"/0vpn_string_to_ip "$leaf_name")
+leaf_ip=$("$my_path"/0vpn-resolve "$leaf_name")
 echo Leaf VPN IP: "$leaf_ip"
 
 ip addr add "$leaf_ip" dev "$device"
@@ -36,7 +36,7 @@ echo Deriving root keys...
 
 root_private=$(./0vpn-tool mixin "$keyfile" "$root_name")
 root_public=$(echo $root_private | wg pubkey)
-root_ip=$("$my_path"/0vpn_string_to_ip "$root_name")
+root_ip=$("$my_path"/0vpn-resolve "$root_name")
 
 echo Root public key: "$root_public"
 echo Root VPN IP: "$root_ip"
@@ -54,6 +54,6 @@ echo -e "search internal\\nnameserver $root_ip" | resolvconf -a "$device"
 
 echo Entering leaf announcement loop...
 while true; do 
-	"$my_path"/0vpn_announce_leaf "$keyfile" "$leaf_name" "$root_public_host" "$root_public_announce_port" || echo Something went wrong announcing this leaf
+	"$my_path"/0vpn-announce-leaf "$keyfile" "$leaf_name" "$root_public_host" "$root_public_announce_port" || echo Something went wrong announcing this leaf
 	sleep "$announce_interval"
 done

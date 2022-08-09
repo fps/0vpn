@@ -25,7 +25,7 @@ nc -ulkp "$root_public_announce_port" | while read line; do
     # echo "    Private: $leaf_private"
     leaf_public=$(echo $leaf_private | wg pubkey)
     echo "    Public: $leaf_public"
-    leaf_wg_ip=$("$my_path"/0vpn_string_to_ip "$host")
+    leaf_wg_ip=$("$my_path"/0vpn-resolve "$host")
     echo "    Leaf IP: $leaf_wg_ip"
 
     echo "  Checking if they match:"

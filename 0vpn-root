@@ -27,7 +27,7 @@ chmod -R 755 "$TMPDIR"
 
 trap 'kill $(cat "$TMPDIR/dnsmasq.pid"); rm -f "$TMPFILE"; rm -rf "$TMPDIR"' EXIT
 
-root_wg_ip=$("$my_path"/0vpn_string_to_ip $root_name)
+root_wg_ip=$("$my_path"/0vpn-resolve $root_name)
 echo root wg ip: $root_wg_ip
 
 mkdir -p "$my_path"/hosts
@@ -56,7 +56,7 @@ for leaf in $static_leafs; do
     echo "  Leaf: $leaf"
 	leaf_private=$("$my_path"/0vpn-tool mixin "$keyfile" $leaf)
 	leaf_public=$(echo $leaf_private | wg pubkey)
-	leaf_wg_ip=$("$my_path"/0vpn_string_to_ip "$leaf")
+	leaf_wg_ip=$("$my_path"/0vpn-resolve "$leaf")
 
     echo "    $leaf public key: $leaf_public"
     echo "    $leaf VPN IP: $leaf_wg_ip"
@@ -87,6 +87,6 @@ dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts"
 
 echo Listening for dynamic nodes...
 while true; do
-	"$my_path"/0vpn_handle_leaf_announcements "$device" "$keyfile" "$root_public_announce_port" "$TMPDIR"
+	"$my_path"/0vpn-handle-leaf-announcements "$device" "$keyfile" "$root_public_announce_port" "$TMPDIR"
 	sleep 10
 done
