@@ -6,11 +6,12 @@ An experiment in making a wireguard VPN setup super easy (almost 0-conf). The on
 
 We give up security for convenience:
 
-* There is a central "master" private key from which all other keys are derived by XOR'ing in the nodes name.
+* There is a central "master" private key from which all other keys are derived by XOR'ing in the nodes' names.
 * Leaf nodes can dynamically announce the wish to partake in the VPN by sending their node name and their (derived) public key. The root node listens on an extra UDP port for these announcements.
 * The root node can rederive the leaf node's key and check for the correctness of the transmitted public key.
 * If those check out the lead node's public key is added to the peers list.
 * IP addresses are derived from the node's names in the 10.123.0.0/16 subnet. So they must be unique and there might be collisions which will make stuff not work well.
+* For non linux clients that only have a "vanilla" wireguard "app" we provide ready to use .cfg files (these are written to the TMPDIR path reported during startup of <code>0vpn-root</code>
 
 # Requirements
 
@@ -72,7 +73,7 @@ Note that this requires privileges to create and configure the wireguard device.
 
 The script will have created config files for every static leaf. In the case of the example config that would be <code>phone_leaf.cfg</code>. You can generate a QR code and display it in the terminal with
 
-<pre>0vpn_show_qr phone_leaf.cfg</pre>
+<pre>0vpn-show-qr phone_leaf.cfg</pre>
 
 On android you can just create a new tunnel directly from this QR code and things should work.
 
@@ -85,7 +86,7 @@ Note that for this to work you need the openbsd netcat version, as it's much les
 
 <pre>0vpn-leaf [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [persistent_keepalive] [leaf_name]</pre>
 
-where all parameters have to be the same as for the root node (except for the device parameter which can be freely chosen and leaving out the static_leafs completely) and additionally:
+where all parameters have to be identical to the ones for the root node (except for the device parameter which can be freely chosen and leaving out the static_leafs completely) and additionally:
 
 <pre>
 [persistent_keepalive]: Number of seconds after which to send keepalive packets
