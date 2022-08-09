@@ -19,7 +19,7 @@ func MixinString(masterKey ed25519.PrivateKey, hostname string) ed25519.PrivateK
 }
 
 func print_usage() {
-	fmt.Println("Usage: 0vpn command [arguments]")
+	fmt.Println("Usage: 0vpn-tool command [arguments]")
 	fmt.Println("")
 	fmt.Println("where command can be one of the following:")
 	fmt.Println("")

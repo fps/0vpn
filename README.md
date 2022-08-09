@@ -54,7 +54,7 @@ Guard this key carefully. It is used to derive all other private keys. That is w
 
 To setup the wireguard device and static peers run
 
-<pre>0vpn root [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [static_leafs]</pre>
+<pre>0vpn-root [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [static_leafs]</pre>
 
 where:
 
@@ -83,7 +83,7 @@ Note that for this to work you need the openbsd netcat version, as it's much les
 
 ### Running
 
-<pre>0vpn leaf [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [persistent_keepalive] [leaf_name]</pre>
+<pre>0vpn-leaf [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [persistent_keepalive] [leaf_name]</pre>
 
 where all parameters have to be the same as for the root node (except for the device parameter which can be freely chosen and leaving out the static_leafs completely) and additionally:
 
@@ -96,10 +96,10 @@ where all parameters have to be the same as for the root node (except for the de
 
 # Post Scriptum
 
-The command <code>0vpn resolve [name]</code> can be used to find out the wireguard IP addresses of other nodes in the network.
+The command <code>0vpn-resolve [name]</code> can be used to find out the wireguard IP addresses of other nodes in the network.
 
 <pre>
-$ 0vpn resolve contabo
+$ 0vpn-resolve contabo
 10.123.65.177
 </pre>
 
