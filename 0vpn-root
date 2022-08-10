@@ -22,6 +22,7 @@ TMPDIR=$(mktemp -d) || exit 1
 echo TMPDIR is "$TMPDIR"
 
 mkdir "$TMPDIR/hosts"
+mkdir "$TMPDIR/configs"
 
 chmod -R 755 "$TMPDIR"
 
@@ -63,7 +64,7 @@ for leaf in $static_leafs; do
 	wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
 	# wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips 10.0.0.0/8
 
-    leaf_config="$TMPDIR"/"$leaf"_leaf.cfg
+    leaf_config="$TMPDIR"/configs/"$leaf".conf
 
     echo "    Creating config for static leaf $leaf_config..."
     echo '[Interface]' > "$leaf_config"
