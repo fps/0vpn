@@ -6,7 +6,7 @@ An experiment in making a wireguard VPN setup super easy (almost 0-conf). The on
 
 We give up security for convenience:
 
-* There is a central "master" private key from which all other keys are derived by XOR'ing in the nodes' names.
+* There is a central "master" private key from which all other keys are derived mixing in the nodes' names.
 * Leaf nodes can dynamically announce the wish to partake in the VPN by sending their node name and their (derived) public key. The root node listens on an extra UDP port for these announcements.
 * The root node can rederive the leaf node's key and check for the correctness of the transmitted public key.
 * If those check out the lead node's public key is added to the peers list.
