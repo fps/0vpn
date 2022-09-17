@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 set -e
 
 my_path=$(dirname "$0")
