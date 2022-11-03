@@ -7,8 +7,14 @@
         default = false;
       };
 
-      clientName = lib.mkOption {
+      keyfile = lib.mkOption {
         type = lib.types.str;
+        default = "";
+      }; 
+
+      serverName = lib.mkOption {
+        type = lib.types.str;
+        default = config.networking.hostName;
       };
 
       serverHost = lib.mkOption {
@@ -25,10 +31,6 @@
         default = 4243;
       };
 
-      keyfile = lib.mkOption {
-        type = lib.types.str;
-      }; 
-
       announceInterval = lib.mkOption {
         type = lib.types.int;
         default = 60;
@@ -41,8 +43,14 @@
         default = false;
       };
 
+      keyfile = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+      };
+
       clientName = lib.mkOption {
         type = lib.types.str;
+        default = config.networking.hostName;
       };
 
       endpointPort = lib.mkOption {
@@ -55,9 +63,6 @@
         default = 4243;
       };
 
-      keyfile = lib.mkOption {
-        type = lib.types.str;
-      }; 
     };
 
   };
