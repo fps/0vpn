@@ -75,7 +75,7 @@
   # Client configuration
   config.systemd.services.zerovpnClient = lib.mkIf config.zerovpn.client.enable {
     enable = true;
-    wantedBy = [ "multiuser.target" ];
+    wantedBy = [ "multi-user.target" ];
     path = [ pkgs.procps pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv ];
     script = "${pkgs.zerovpn}/bin/0vpn-leaf ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.client.serverName} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} ${builtins.toString config.zerovpn.announceInterval} ${config.zerovpn.name}";
   };
@@ -83,7 +83,7 @@
   # Server configuration
   config.systemd.services.zerovpnServer = lib.mkIf config.zerovpn.server.enable {
     enable = true;
-    wantedBy = [ "multiuser.target" ];
+    wantedBy = [ "multi-user.target" ];
     path = [ pkgs.procps pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv pkgs.dnsmasq ];
     script = "${pkgs.zerovpn}/bin/0vpn-root ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.name} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"";
   };
