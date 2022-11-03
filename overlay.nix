@@ -3,8 +3,8 @@ final: prev:
   zerovpn = prev.buildGoModule rec {
     pname = "zerovpn";
     src = ./.;
-    vendorHash = null;
-    # vendorSha256 = null;
+    # vendorHash = null;
+    vendorSha256 = null;
     name = "zerovpn";
     propagatedBuildInputs = [ prev.wireguard-tools prev.procps prev.netcat-openbsd ];
     postInstall = ''

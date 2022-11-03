@@ -77,7 +77,7 @@
     enable = true;
     wantedBy = [ "multiuser.target" ];
     path = [ pkgs.procps pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv ];
-    script = "${pkgs.zerovpn}/bin/0vpn-leaf ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.client.serverName} ${config.zerovpn.client.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} ${builtins.toString config.zerovpn.announceInterval} ${config.zerovpn.name}";
+    script = "${pkgs.zerovpn}/bin/0vpn-leaf ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.client.serverName} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} ${builtins.toString config.zerovpn.announceInterval} ${config.zerovpn.name}";
   };
 
   # Server configuration
