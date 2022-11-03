@@ -83,8 +83,8 @@
   config.systemd.services.zerovpnClient = lib.mkIf config.zerovpn.client.enable {
     enable = true;
     wantedBy = [ "multiuser.target" ];
-    path = [ pkgs.procps pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 ];
-    script = "${pkgs.zerovpn}/bin/0vpn-leaf ${config.zerovpn.client.interface} ${config.zerovpn.client.key} ${config.zerovpn.client.serverName} ${config.zerovpn.client.serverHost} ${builtins.toString config.zerovpn.client.endpointPort} ${builtins.toString config.zerovpn.client.announcePort} ${builtins.toString config.zerovpn.client.announceInterval} ${config.zerovpn.client.name}";
+    path = [ pkgs.procps pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv ];
+    script = "${pkgs.zerovpn}/bin/0vpn-leaf ${config.zerovpn.client.interface} /etc/zerovpn-key ${config.zerovpn.client.serverName} ${config.zerovpn.client.serverHost} ${builtins.toString config.zerovpn.client.endpointPort} ${builtins.toString config.zerovpn.client.announcePort} ${builtins.toString config.zerovpn.client.announceInterval} ${config.zerovpn.client.name}";
   };
 
   config.users.users.zerovpn = {

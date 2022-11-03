@@ -24,7 +24,7 @@ leaf_ip=$("$my_path"/0vpn-resolve "$leaf_name")
 echo Leaf VPN IP: "$leaf_ip"
 
 ip addr add "$leaf_ip" dev "$device"
-./0vpn-tool mixin "$keyfile" "$leaf_name" > $TMPFILE
+"$my_path"/0vpn-tool mixin "$keyfile" "$leaf_name" > $TMPFILE
 wg set "$device" private-key $TMPFILE
 ip link set "$device" up
 
@@ -32,7 +32,7 @@ rm -f "$TMPFILE"
 
 echo Deriving root keys...
 
-root_private=$(./0vpn-tool mixin "$keyfile" "$root_name")
+root_private=$("$my_path"/0vpn-tool mixin "$keyfile" "$root_name")
 root_public=$(echo $root_private | wg pubkey)
 root_ip=$("$my_path"/0vpn-resolve "$root_name")
 
