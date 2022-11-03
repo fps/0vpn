@@ -5,14 +5,11 @@ final: prev:
     src = ./.;
     vendorHash = null;
     name = "zerovpn";
-
-    # GOPATH="${out}/gopath";
-    # GOCACHE="${out}/gocache";
-
-    configurePhase = ''
-      GOPATH=$TMPDIR/gopath
-      GOCACHE=$TMPDIR/gocache
-      go mod vendor
+    propagatedBuildInputs = [ prev.wireguard-tools prev.procps prev.netcat-openbsd ];
+    postInstall = ''
+      echo installing scripts...
+      install -d $out/bin
+      install 0vpn-* $out/bin/
     '';
-  };
+   };
 }
