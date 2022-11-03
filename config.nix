@@ -7,11 +7,11 @@
         default = false;
       };
 
-      name = lib.mkOption {
+      clientName = lib.mkOption {
         type = lib.types.str;
       };
 
-      host = lib.mkOption {
+      serverHost = lib.mkOption {
         type = lib.types.str;
       };
 
@@ -41,7 +41,7 @@
         default = false;
       };
 
-      name = lib.mkOption {
+      clientName = lib.mkOption {
         type = lib.types.str;
       };
 
