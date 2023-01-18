@@ -30,7 +30,7 @@ nc -ulkp "$root_public_announce_port" | while read line; do
             echo "  Match! adding the leaf..."
             wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
             echo "$leaf_wg_ip" "$host".internal > "$tmpdir"/hosts/"$host"
-            kill -SIGHUP $(cat "$tmpdir/dnsmasq.pid")
+            kill -1 $(cat "$tmpdir/dnsmasq.pid")
         fi
     else
         echo "  key mismatch. not adding leaf..."
