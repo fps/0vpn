@@ -6,7 +6,7 @@ final: prev:
     # vendorHash = null;
     vendorSha256 = null;
     name = "zerovpn";
-    propagatedBuildInputs = [ prev.wireguard-tools prev.procps prev.netcat-openbsd ];
+    propagatedBuildInputs = [ prev.wireguard-tools prev.netcat-openbsd ];
     postInstall = ''
       echo installing scripts...
       install -d $out/bin
