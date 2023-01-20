@@ -52,18 +52,18 @@ ip route add 10.123.0.0/16 dev "$device"
 echo Setting up static leafs...
 for leaf in $static_leafs; do
     echo "  Leaf: $leaf"
-	leaf_private=$("$my_path"/0vpn-tool mixin "$keyfile" $leaf)
-	leaf_public=$(echo $leaf_private | wg pubkey)
-	leaf_wg_ip=$("$my_path"/0vpn-resolve "$leaf")
-
+    leaf_private=$("$my_path"/0vpn-tool mixin "$keyfile" $leaf)
+  	leaf_public=$(echo $leaf_private | wg pubkey)
+  	leaf_wg_ip=$("$my_path"/0vpn-resolve "$leaf")
+  
     echo "    $leaf public key: $leaf_public"
     echo "    $leaf VPN IP: $leaf_wg_ip"
-
-	wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
-	# wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips 10.0.0.0/8
-
+  
+  	wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
+  	# wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips 10.0.0.0/8
+  
     leaf_config="$TMPDIR"/configs/"$leaf".conf
-
+  
     echo "    Creating config for static leaf $leaf_config..."
     echo '[Interface]' > "$leaf_config"
     echo "PrivateKey = $leaf_private" >> "$leaf_config"
@@ -85,6 +85,6 @@ dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts"
 
 echo Listening for dynamic nodes...
 while true; do
-	"$my_path"/0vpn-handle-leaf-announcements "$device" "$keyfile" "$root_public_announce_port" "$TMPDIR"
-	sleep 10
+  	"$my_path"/0vpn-handle-leaf-announcements "$device" "$keyfile" "$root_public_announce_port" "$TMPDIR"
+	  sleep 10
 done
