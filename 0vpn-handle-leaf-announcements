@@ -12,7 +12,7 @@ IFS=' '
 nc -ulkp "$root_public_announce_port" | while read line; do 
     # echo Got line: $line;
     read -ra tokens <<< "$line"
-    echo "  host: ${tokens[0]}  public: ${tokens[1]}"
+    # echo "  host: ${tokens[0]}  public: ${tokens[1]}"
     host=${tokens[0]}
     public=${tokens[1]}
 
@@ -20,14 +20,14 @@ nc -ulkp "$root_public_announce_port" | while read line; do
     # echo "    Private: $leaf_private"
     leaf_public=$(echo $leaf_private | wg pubkey)
     leaf_wg_ip=$("$my_path"/0vpn-resolve "$host")
-    echo "    Public: $leaf_public  Leaf IP: $leaf_wg_ip"
+    # echo "    Public: $leaf_public  Leaf IP: $leaf_wg_ip"
 
     # echo "  Checking if they match:"
     if [ "${tokens[1]}" == "$leaf_public" ]; then 
         if test -f "$tmpdir"/hosts/"$host"; then
-            echo "  Already announced"
+            # stdbuf -i 0 -o 0 -e 0 echo -n "."
         else
-            echo "  Match! adding the leaf..."
+            echo -e -n "\nMatch! adding the leaf: Host: $host  Public key: $leaf_public  IP: $leaf_wg_ip\n"
             wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips $leaf_wg_ip
             echo "$leaf_wg_ip" "$host".internal > "$tmpdir"/hosts/"$host"
             kill -1 $(cat "$tmpdir/dnsmasq.pid")
