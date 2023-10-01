@@ -46,9 +46,12 @@ echo Output of wg show "$device":
 wg show "$device"
 
 echo Adding route...
-ip route add 10.123.0.0/16 dev wg0
+ip route add 10.123.0.0/16 dev "$device"
 
-echo -e "search internal\\nnameserver $root_ip" | resolvconf -a "$device"
+# echo -e "search internal\\nnameserver $root_ip" | resolvconf -a "$device"
+resolvectl dns "$device" "$root_ip"
+resolvectl domain "$device" internal
+
 
 echo Entering leaf announcement loop...
 while true; do 
