@@ -77,7 +77,10 @@
       };
     })
     (lib.mkIf config.zerovpn.client.enable {
+      services.resolved.enable = true;
       networking.networkmanager.dns = "systemd-resolved";
+      networking.networkmanager.enable = true;
+
       systemd.services.zerovpnClient = {
         enable = true;
         wantedBy = [ "multi-user.target" ];
