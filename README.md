@@ -55,18 +55,19 @@ Guard this key carefully. It is used to derive all other private keys. That is w
 
 To setup the wireguard device and static peers run
 
-<pre>0vpn-root [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [static_leafs]</pre>
+<pre>0vpn-root [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [static_leafs] [dns_port]</pre>
 
 where:
 
 <pre>
 [device]:             A name for the wireguard device created (example: wg0)
-[key]:                The "master" private key from which all other keys are derived
+[key]:                The file containing the "master" private key from which all other keys are derived
 [root_name]:          The name of the root node. Example: myroot
 [root_host]:          The publically routable hostname of the root node. Example: example.com
 [root_port]:          The port on the root_host where the wireguard endpoint lives. Example: 4242
 [root_announce_port]: The port the root node listens on for dynamic leaf node addition announcements. Example: 4243
 [static_leafs]:       A single string containing leaf node names that are added as peers without dynamic announcement. Example: "my_phone my_desktop my_laptop"
+[dns_port]:           The port dnsmasq listens on
 </pre>
 
 Note that this requires privileges to create and configure the wireguard device.
