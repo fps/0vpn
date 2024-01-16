@@ -85,7 +85,7 @@ Note that for this to work you need the openbsd netcat version, as it's much les
 
 ### Running
 
-<pre>0vpn-leaf [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [persistent_keepalive] [leaf_name]</pre>
+<pre>0vpn-leaf [device] [key] [root_name] [root_host] [root_port] [root_annouce_port] [persistent_keepalive] [leaf_name] [dns_port]</pre>
 
 where all parameters have to be identical to the ones for the root node (except for the device parameter which can be freely chosen and leaving out the static_leafs completely) and additionally:
 
