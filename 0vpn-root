@@ -79,7 +79,7 @@ for leaf in $static_leafs; do
     echo "$leaf_wg_ip" "$leaf.internal" > "$TMPDIR"/hosts/"$leaf"
 done
 
-echo Starting dnsmasq...
+echo Starting dnsmasq on port "$dns_port"...
 touch "$TMPDIR/dnsmasq.conf"
 dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p "$dns_port" --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$device"
 

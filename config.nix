@@ -59,7 +59,7 @@
 
     dnsPort = lib.mkOption {
       type = lib.types.int;
-      default = 5553;
+      default = 53;
     };
   };
 
@@ -102,7 +102,7 @@
         serviceConfig = { Restart = "always"; RestartSec = "1"; };
         unitConfig = { StartLimitIntervalSec = 0; };
         path = [ pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv pkgs.dnsmasq ];
-        script = "${pkgs.zerovpn}/bin/0vpn-root ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.name} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"" + "${builtins.toString config.zerovpn.dnsPort}";
+        script = "${pkgs.zerovpn}/bin/0vpn-root ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.name} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"" + " ${builtins.toString config.zerovpn.dnsPort}";
       };
     })
     ];
