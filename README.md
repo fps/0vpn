@@ -49,6 +49,10 @@ Generate a master private key:
 
 Guard this key carefully. It is used to derive all other private keys. That is what allows 0vpn to be almost 0-conf.
 
+Alternatively derive a private key from a password:
+
+<pre>./0vpn-tool key-from-password [your password here] > private</pre>
+
 ## On the root node
 
 ### Running
