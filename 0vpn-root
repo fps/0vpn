@@ -9,6 +9,7 @@ root_public_host="$4"
 root_public_port="$5"
 root_public_announce_port="$6"
 static_leafs="$7"
+dns_port="$8"
 
 echo Creating temporary file...
 TMPFILE=$(mktemp) || exit 1
@@ -80,7 +81,7 @@ done
 
 echo Starting dnsmasq...
 touch "$TMPDIR/dnsmasq.conf"
-dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p 53 --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$device"
+dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p "$dns_port" --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$device"
 
 
 echo Listening for dynamic nodes...

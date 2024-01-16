@@ -56,6 +56,11 @@
       type = lib.types.int;
       default = 60;
     };
+
+    dnsPort = lib.mkOption {
+      type = lib.types.int;
+      default = 5553;
+    };
   };
 
   config = lib.mkMerge [
@@ -87,7 +92,7 @@
         serviceConfig = { Restart = "always"; RestartSec = "1"; };
         unitConfig = { StartLimitIntervalSec = 0; };
         path = [ pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv ];
-        script = "${pkgs.zerovpn}/bin/0vpn-leaf ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.client.serverName} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} ${builtins.toString config.zerovpn.announceInterval} ${config.zerovpn.name}";
+        script = "${pkgs.zerovpn}/bin/0vpn-leaf ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.client.serverName} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} ${builtins.toString config.zerovpn.announceInterval} ${config.zerovpn.name} ${config.zerovpn.dnsPort}";
       };
     })
     (lib.mkIf config.zerovpn.server.enable {
@@ -97,7 +102,7 @@
         serviceConfig = { Restart = "always"; RestartSec = "1"; };
         unitConfig = { StartLimitIntervalSec = 0; };
         path = [ pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv pkgs.dnsmasq ];
-        script = "${pkgs.zerovpn}/bin/0vpn-root ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.name} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"";
+        script = "${pkgs.zerovpn}/bin/0vpn-root ${config.zerovpn.interface} /etc/zerovpn-key ${config.zerovpn.name} ${config.zerovpn.serverHost} ${builtins.toString config.zerovpn.endpointPort} ${builtins.toString config.zerovpn.announcePort} " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"" + ${config.zerovpn.dnsPort};
       };
     })
     ];
