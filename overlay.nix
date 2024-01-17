@@ -6,8 +6,9 @@ final: prev:
     # vendorHash = null;
     vendorSha256 = null;
     name = "zerovpn";
-    propagatedBuildInputs = [ prev.wireguard-tools prev.netcat-openbsd ];
+    propagatedBuildInputs = [ prev.wireguard-tools prev.netcat-openbsd prev.bash ];
     postInstall = ''
+      patchShebangs --host .
       echo installing scripts...
       install -d $out/bin
       install 0vpn-* $out/bin/
