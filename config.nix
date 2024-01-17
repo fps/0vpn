@@ -96,6 +96,7 @@
       };
     })
     (lib.mkIf config.zerovpn.server.enable {
+      networking.firewall.allowedUDPPorts = [ config.zerovpn.endpointPort config.zerovpn.announcePort config.zerovpn.dnsPort ];
       systemd.services.zerovpnServer = {
         enable = true;
         wantedBy = [ "multi-user.target" ];
