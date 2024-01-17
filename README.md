@@ -29,6 +29,7 @@ We give up security for convenience:
 * wireguard-tools
 * bash
 * core utilities like cat, kill, mktemp, etc..
+* systemd-resolved 
 
 ## On static leafs
 
