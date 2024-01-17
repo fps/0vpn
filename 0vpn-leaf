@@ -27,8 +27,8 @@ leaf_ip=$("$my_path"/0vpn-resolve "$leaf_name")
 echo Leaf VPN IP: "$leaf_ip"
 
 ip addr add "$leaf_ip" dev "$device"
-"$my_path"/0vpn-tool mixin "$keyfile" "$leaf_name" > $TMPFILE
-wg set "$device" private-key $TMPFILE
+"$my_path"/0vpn-tool mixin "$keyfile" "$leaf_name" > "$TMPFILE"
+wg set "$device" private-key "$TMPFILE"
 ip link set "$device" up
 
 rm -f "$TMPFILE"
