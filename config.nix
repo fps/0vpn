@@ -80,6 +80,8 @@
         user = "zerovpn";
         group = "zerovpn";
       };
+
+      environment.systemPackages = [ pkgs.zerovpn ];
     })
     (lib.mkIf config.zerovpn.client.enable {
       services.resolved.enable = true;
