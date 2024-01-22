@@ -10,14 +10,6 @@ import (
 	"io/ioutil"
 )
 
-func MixinString(masterKey ed25519.PrivateKey, hostname string) ed25519.PrivateKey {
-	sigPrivSlice := masterKey[0:32]
-	for index := 0; index < len(sigPrivSlice); index++ {
-		sigPrivSlice[index] = sigPrivSlice[index] ^ hostname[index%len(hostname)]
-	}
-	return ed25519.NewKeyFromSeed(sigPrivSlice)
-}
-
 func print_usage() {
 	fmt.Println("Usage: 0vpn-tool command [arguments]")
 	fmt.Println("")
