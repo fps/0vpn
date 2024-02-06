@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail -e
+
 ZEROVPN_HUB_HOST="localhost"
 ZEROVPN_HUB_WIREGUARD_PORT="4242"
 ZEROVPN_HUB_SPOKE_ANNOUNCE_PORT="4243"
@@ -21,7 +23,6 @@ help() {
     echo "  --network [network-spec]         (default: \"$ZEROVPN_NETWORK\")"
     echo "  --wireguard-device [device-name] (default: \"$ZEROVPN_WIREGUARD_DEVICE\")"
     echo "  --static-spokes [list of names]  (default: \"$ZEROVPN_STATIC_SPOKES\")"
-    exit 0
 }
 
 while true; do
@@ -35,9 +36,9 @@ while true; do
         --network) export ZEROVPN_NETWORK="$2"; shift 2;;
         --wireguard-device) export ZEROVPN_WIREGUARD_DEVICE="$2"; shift 2;;
         --static-spokes) export ZEROVPN_STATIC_SPOKES="$2"; shift 2;;
-        --help) help; shift 1;;
-        -h) help; shift 1;;
-        *) echo "Error parsing arguments. Expected argument. Got: \"$1\""; exit 1; break;;
+        --help) help; shift 1; exit 0;;
+        -h) help; shift 1; exit 0;;
+        *) echo "Error parsing arguments. Expected argument. Got: \"$1\""; exit 1;;
     esac
 
     if [ "$#" -eq 0 ]; then
