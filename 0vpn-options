@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script is expected to be sourced by the other 0vpn-scripts
+
 set -o pipefail -e
 
 ZEROVPN_HUB_HOST="localhost"
@@ -26,24 +28,33 @@ help() {
 }
 
 while true; do
+    if [ "$#" -eq 0 ]; then
+        break;
+    fi
+
     case $1 in
-        --hub-host) export ZEROVPN_HUB_HOST="$2"; shift 2;;
-        --hub-wireguard-port) export ZEROVPN_HUB_WIREGUARD_PORT="$2"; shift 2;;
-        --hub-spoke-announce-port) export ZEROVPN_HUB_SPOKE_ANNOUNCE_PORT="$2"; shift 2;;
-        --dns-port) export ZEROVPN_DNS_PORT="$2"; shift 2;;
-        --keyfile) export ZEROVPN_KEYFILE="$2"; shift 2;;
-        --tld) export ZEROVPN_TLD="$2"; shift 2;;
-        --network) export ZEROVPN_NETWORK="$2"; shift 2;;
-        --wireguard-device) export ZEROVPN_WIREGUARD_DEVICE="$2"; shift 2;;
-        --static-spokes) export ZEROVPN_STATIC_SPOKES="$2"; shift 2;;
+        --hub-host) ZEROVPN_HUB_HOST="$2"; shift 2;;
+        --hub-wireguard-port) ZEROVPN_HUB_WIREGUARD_PORT="$2"; shift 2;;
+        --hub-spoke-announce-port) ZEROVPN_HUB_SPOKE_ANNOUNCE_PORT="$2"; shift 2;;
+        --dns-port) ZEROVPN_DNS_PORT="$2"; shift 2;;
+        --keyfile) ZEROVPN_KEYFILE="$2"; shift 2;;
+        --tld) ZEROVPN_TLD="$2"; shift 2;;
+        --network) ZEROVPN_NETWORK="$2"; shift 2;;
+        --wireguard-device) ZEROVPN_WIREGUARD_DEVICE="$2"; shift 2;;
+        --static-spokes) ZEROVPN_STATIC_SPOKES="$2"; shift 2;;
         --help) help; shift 1; exit 0;;
         -h) help; shift 1; exit 0;;
         *) echo "Error parsing arguments. Expected argument. Got: \"$1\""; exit 1;;
     esac
-
-    if [ "$#" -eq 0 ]; then
-        break;
-    fi
 done
 
+export ZEROVPN_HUB_HOST
+export ZEROVPN_HUB_WIREGUARD_PORT
+export ZEROVPN_HUB_SPOKE_ANNOUNCE_PORT
+export ZEROVPN_DNS_PORT
+export ZEROVPN_KEYFILE
+export ZEROVPN_TLD
+export ZEROVPN_NETWORK
+export ZEROVPN_WIREGUARD_DEVICE
+export ZEROVPN_STATIC_SPOKES
 
