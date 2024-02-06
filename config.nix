@@ -7,7 +7,7 @@
         default = false;
       };
 
-      serverName = lib.mkOption {
+      name = lib.mkOption {
         type = lib.types.str;
       };
     };
@@ -28,7 +28,7 @@
         type = lib.types.str;
     };
 
-    name = lib.mkOption {
+    serverName = lib.mkOption {
       type = lib.types.str;
       default = config.networking.hostName;
     };
@@ -42,7 +42,7 @@
       default = "wg0";
     };
 
-    endpointPort = lib.mkOption {
+    wireguardPort = lib.mkOption {
       type = lib.types.int;
       default = 4242;
     };
@@ -94,18 +94,18 @@
         serviceConfig = { Restart = "always"; RestartSec = "1"; };
         unitConfig = { StartLimitIntervalSec = 0; };
         path = [ pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv ];
-        script = "${pkgs.zerovpn}/bin/0vpn-client --wireguard-interface ${config.zerovpn.interface} --keyfile /etc/zerovpn-key --server-name ${config.zerovpn.client.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.endpointPort} --announce-port ${builtins.toString config.zerovpn.announcePort} --announce-interval ${builtins.toString config.zerovpn.announceInterval} --client-name ${config.zerovpn.name} --dns-port ${builtins.toString config.zerovpn.dnsPort}";
+        script = "${pkgs.zerovpn}/bin/0vpn-client --wireguard-interface ${config.zerovpn.interface} --keyfile /etc/zerovpn-key --server-name ${config.zerovpn.client.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.wireguardPort} --announce-port ${builtins.toString config.zerovpn.announcePort} --announce-interval ${builtins.toString config.zerovpn.announceInterval} --client-name ${config.zerovpn.client.name} --dns-port ${builtins.toString config.zerovpn.dnsPort}";
       };
     })
     (lib.mkIf config.zerovpn.server.enable {
-      networking.firewall.allowedUDPPorts = [ config.zerovpn.endpointPort config.zerovpn.announcePort config.zerovpn.dnsPort ];
+      networking.firewall.allowedUDPPorts = [ config.zerovpn.wireguardPort config.zerovpn.announcePort config.zerovpn.dnsPort ];
       systemd.services.zerovpnServer = {
         enable = true;
         wantedBy = [ "multi-user.target" ];
         serviceConfig = { Restart = "always"; RestartSec = "1"; };
         unitConfig = { StartLimitIntervalSec = 0; };
         path = [ pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv pkgs.dnsmasq ];
-        script = "${pkgs.zerovpn}/bin/0vpn-server --wireguard-interface ${config.zerovpn.interface} --keyfile /etc/zerovpn-key --server-name ${config.zerovpn.name} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.endpointPort} --anounce-port ${builtins.toString config.zerovpn.announcePort} --static-clients " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"" + " --dns-port ${builtins.toString config.zerovpn.dnsPort}";
+        script = "${pkgs.zerovpn}/bin/0vpn-server --wireguard-interface ${config.zerovpn.interface} --keyfile /etc/zerovpn-key --server-name ${config.zerovpn.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.wireguardPort} --anounce-port ${builtins.toString config.zerovpn.announcePort} --static-clients " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"" + " --dns-port ${builtins.toString config.zerovpn.dnsPort}";
       };
     })
     ];
