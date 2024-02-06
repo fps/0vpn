@@ -2,15 +2,10 @@
 
 # This script is expected to be sourced by the other 0vpn-scripts
 
-function cleanup {
-    set +o pipefail +e
-}
-
-trap cleanup EXIT
-
-set -o pipefail -e
-
-[[ "$0" == "$BASH_SOURCE" ]] && ret=exit || ret=return
+if [ "$0" == "$BASH_SOURCE" ]; then
+    echo "This script is made to be sourced, not run."
+    exit 1
+fi
 
 ZEROVPN_HUB_HOST="localhost"
 ZEROVPN_HUB_WIREGUARD_PORT="4242"
@@ -53,9 +48,9 @@ while true; do
         --wireguard-device) ZEROVPN_WIREGUARD_DEVICE="$2"; shift 2;;
         --static-spokes) ZEROVPN_STATIC_SPOKES="$2"; shift 2;;
         --spoke-name) ZEROVPN_SPOKE_NAME="$2"; shift 2;;
-        --help) help; shift 1; $ret 0;;
-        -h) help; shift 1; $ret 0;;
-        *) echo "Error parsing arguments. Expected argument. Got: \"$1\""; $ret 1;;
+        --help) help; shift 1; return 0;;
+        -h) help; shift 1; return 0;;
+        *) echo "Error parsing arguments. Expected argument. Got: \"$1\""; return 1;;
     esac
 done
 
@@ -70,4 +65,3 @@ export ZEROVPN_WIREGUARD_DEVICE
 export ZEROVPN_STATIC_SPOKES
 export ZEROVPN_SPOKE_NAME
 
-cleanup
