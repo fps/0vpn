@@ -37,13 +37,13 @@ echo Root public key: "$root_public"
 echo Root VPN IP: "$root_ip"
 
 echo Setting up root node endpoint...
-wg set "$ZEROVPN_WIREGUARD_DEVICE" peer $root_public endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips 10.123.0.0/16
+wg set "$ZEROVPN_WIREGUARD_DEVICE" peer $root_public endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips "$ZEROVPN_NETWORK"
 
 echo Output of wg show "$ZEROVPN_WIREGUARD_DEVICE":
 wg show "$ZEROVPN_WIREGUARD_DEVICE"
 
 echo Adding route...
-ip route add 10.123.0.0/16 dev "$ZEROVPN_WIREGUARD_DEVICE"
+ip route add "$ZEROVPN_NETWORK" dev "$ZEROVPN_WIREGUARD_DEVICE"
 
 # echo -e "search internal\\nnameserver $root_ip" | resolvconf -a "$ZEROVPN_WIREGUARD_DEVICE"
 resolvectl dns "$ZEROVPN_WIREGUARD_DEVICE" "$root_ip":"$ZEROVPN_DNS_PORT"
