@@ -2,7 +2,15 @@
 
 # This script is expected to be sourced by the other 0vpn-scripts
 
+function cleanup {
+    set +o pipefail +e
+}
+
+trap cleanup EXIT
+
 set -o pipefail -e
+
+[[ "$0" == "$BASH_SOURCE" ]] && ret=exit || ret=return
 
 ZEROVPN_HUB_HOST="localhost"
 ZEROVPN_HUB_WIREGUARD_PORT="4242"
@@ -13,8 +21,9 @@ ZEROVPN_TLD="internal"
 ZEROVPN_NETWORK="10.123.0.0/16"
 ZEROVPN_WIREGUARD_DEVICE="wg0"
 ZEROVPN_STATIC_SPOKES=""
+ZEROVPN_SPOKE_NAME="$(hostname)"
 
-help() {
+function help {
     echo "Available options:"
     echo "  --hub-host [hostname]            (default: \"$ZEROVPN_HUB_HOST\")"
     echo "  --hub-wireguard-port [port]      (default: \"$ZEROVPN_HUB_WIREGUARD_PORT\")"
@@ -25,6 +34,7 @@ help() {
     echo "  --network [network-spec]         (default: \"$ZEROVPN_NETWORK\")"
     echo "  --wireguard-device [device-name] (default: \"$ZEROVPN_WIREGUARD_DEVICE\")"
     echo "  --static-spokes [list of names]  (default: \"$ZEROVPN_STATIC_SPOKES\")"
+    echo "  --spoke-name [name]              (default: \"$ZEROVPN_SPOKE_NAME\")"
 }
 
 while true; do
@@ -42,9 +52,10 @@ while true; do
         --network) ZEROVPN_NETWORK="$2"; shift 2;;
         --wireguard-device) ZEROVPN_WIREGUARD_DEVICE="$2"; shift 2;;
         --static-spokes) ZEROVPN_STATIC_SPOKES="$2"; shift 2;;
-        --help) help; shift 1; exit 0;;
-        -h) help; shift 1; exit 0;;
-        *) echo "Error parsing arguments. Expected argument. Got: \"$1\""; exit 1;;
+        --spoke-name) ZEROVPN_SPOKE_NAME="$2"; shift 2;;
+        --help) help; shift 1; $ret 0;;
+        -h) help; shift 1; $ret 0;;
+        *) echo "Error parsing arguments. Expected argument. Got: \"$1\""; $ret 1;;
     esac
 done
 
@@ -57,4 +68,6 @@ export ZEROVPN_TLD
 export ZEROVPN_NETWORK
 export ZEROVPN_WIREGUARD_DEVICE
 export ZEROVPN_STATIC_SPOKES
+export ZEROVPN_SPOKE_NAME
 
+cleanup
