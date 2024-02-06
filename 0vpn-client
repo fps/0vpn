@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -e 
+
+my_path=$(dirname "$0")
+
+source "$my_path"/0vpn-options
+
+set +v
+
+echo Creating temporary file...
+TMPFILE=$(mktemp) || exit 1
+echo tmpfile: "$TMPFILE"
+trap 'echo Cleaning up...; rm -f "$TMPFILE"' EXIT
+
+echo Setting up wireguard device "$ZEROVPN_WIREGUARD_DEVICE"...
+echo Removing old device... $(ip link delete "$ZEROVPN_WIREGUARD_DEVICE")
+ip link add "$ZEROVPN_WIREGUARD_DEVICE" type wireguard
+
+leaf_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_CLIENT_NAME")
+echo Leaf VPN IP: "$leaf_ip"
+
+ip addr add "$leaf_ip" dev "$ZEROVPN_WIREGUARD_DEVICE"
+"$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_CLIENT_NAME" > "$TMPFILE"
+wg set "$ZEROVPN_WIREGUARD_DEVICE" private-key "$TMPFILE"
+ip link set "$ZEROVPN_WIREGUARD_DEVICE" up
+
+rm -f "$TMPFILE"
+
+echo Deriving root keys...
+
+root_private=$("$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME")
+root_public=$(echo $root_private | wg pubkey)
+root_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_SERVER_NAME")
+
+echo Root public key: "$root_public"
+echo Root VPN IP: "$root_ip"
+
+echo Setting up root node endpoint...
+wg set "$ZEROVPN_WIREGUARD_DEVICE" peer $root_public endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips 10.123.0.0/16
+
+echo Output of wg show "$ZEROVPN_WIREGUARD_DEVICE":
+wg show "$ZEROVPN_WIREGUARD_DEVICE"
+
+echo Adding route...
+ip route add 10.123.0.0/16 dev "$ZEROVPN_WIREGUARD_DEVICE"
+
+# echo -e "search internal\\nnameserver $root_ip" | resolvconf -a "$ZEROVPN_WIREGUARD_DEVICE"
+resolvectl dns "$ZEROVPN_WIREGUARD_DEVICE" "$root_ip":"$ZEROVPN_DNS_PORT"
+resolvectl domain "$ZEROVPN_WIREGUARD_DEVICE" internal
+
+
+echo Entering leaf announcement loop...
+while true; do 
+	"$my_path"/0vpn-announce-leaf "$ZEROVPN_KEYFILE" "$ZEROVPN_CLIENT_NAME" "$ZEROVPN_SERVER_HOSTNAME" "$ZEROVPN_ANNOUNCE_PORT" || echo Something went wrong announcing this leaf
+	sleep "$ZEROVPN_ANNOUNCE_INTERVAL"
+done
