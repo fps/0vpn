@@ -1,0 +1,48 @@
+#!/bin/bash
+
+ZEROVPN_HUB_HOST="localhost"
+ZEROVPN_HUB_WIREGUARD_PORT="4242"
+ZEROVPN_HUB_SPOKE_ANNOUNCE_PORT="4243"
+ZEROVPN_DNS_PORT="53"
+ZEROVPN_KEYFILE="key"
+ZEROVPN_TLD="internal"
+ZEROVPN_NETWORK="10.123.0.0/16"
+ZEROVPN_WIREGUARD_DEVICE="wg0"
+ZEROVPN_STATIC_SPOKES=""
+
+help() {
+    echo "Available options:"
+    echo "  --hub-host [hostname]            (default: \"$ZEROVPN_HUB_HOST\")"
+    echo "  --hub-wireguard-port [port]      (default: \"$ZEROVPN_HUB_WIREGUARD_PORT\")"
+    echo "  --hub-spoke-announce-port [port] (default: \"$ZEROVPN_HUB_SPOKE_ANNOUNCE_PORT\")"
+    echo "  --dns-port [port]                (default: \"$ZEROVPN_DNS_PORT\")"
+    echo "  --keyfile [filename]             (default: \"$ZEROVPN_KEYFILE\")"
+    echo "  --tld [domain-name]              (default: \"$ZEROVPN_TLD\")"
+    echo "  --network [network-spec]         (default: \"$ZEROVPN_NETWORK\")"
+    echo "  --wireguard-device [device-name] (default: \"$ZEROVPN_WIREGUARD_DEVICE\")"
+    echo "  --static-spokes [list of names]  (default: \"$ZEROVPN_STATIC_SPOKES\")"
+    exit 0
+}
+
+while true; do
+    case $1 in
+        --hub-host) export ZEROVPN_HUB_HOST="$2"; shift 2;;
+        --hub-wireguard-port) export ZEROVPN_HUB_WIREGUARD_PORT="$2"; shift 2;;
+        --hub-spoke-announce-port) export ZEROVPN_HUB_SPOKE_ANNOUNCE_PORT="$2"; shift 2;;
+        --dns-port) export ZEROVPN_DNS_PORT="$2"; shift 2;;
+        --keyfile) export ZEROVPN_KEYFILE="$2"; shift 2;;
+        --tld) export ZEROVPN_TLD="$2"; shift 2;;
+        --network) export ZEROVPN_NETWORK="$2"; shift 2;;
+        --wireguard-device) export ZEROVPN_WIREGUARD_DEVICE="$2"; shift 2;;
+        --static-spokes) export ZEROVPN_STATIC_SPOKES="$2"; shift 2;;
+        --help) help; shift 1;;
+        -h) help; shift 1;;
+        *) echo "Error parsing arguments. Expected argument. Got: \"$1\""; exit 1; break;;
+    esac
+
+    if [ "$#" -eq 0 ]; then
+        break;
+    fi
+done
+
+
