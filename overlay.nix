@@ -6,7 +6,7 @@ final: prev:
     vendorHash = null;
     # vendorSha256 = null;
     name = "zerovpn";
-    propagatedBuildInputs = [ prev.wireguard-tools prev.netcat-openbsd prev.bash ];
+    propagatedBuildInputs = [ prev.netcat-openbsd prev.bash ];
     postInstall = ''
       patchShebangs --host .
       echo installing scripts...
