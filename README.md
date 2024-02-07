@@ -1,6 +1,6 @@
 # 0vpn
 
-An experiment in making a wireguard VPN setup super easy (almost 0-conf). The only supported topology right now is the root-and-leafs (spokes-and-hub) topology.
+An experiment in making a wireguard VPN setup super easy (almost 0-conf). The only supported topology right now is the root-and-leafs (hub-and-spokes) topology.
 
 ## How does it work?
 
