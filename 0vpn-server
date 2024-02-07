@@ -4,14 +4,7 @@ set -e
 
 my_path=$(dirname "$0")
 
-device="$1"
-keyfile="$2"
-root_name="$3"
-root_public_host="$4"
-root_public_port="$5"
-root_public_announce_port="$6"
-static_leafs="$7"
-dns_port="$8"
+source "$my_path"/0vpn-options
 
 echo Creating temporary file...
 TMPFILE=$(mktemp) || exit 1
@@ -29,41 +22,41 @@ chmod -R 755 "$TMPDIR"
 
 trap 'kill $(cat "$TMPDIR/dnsmasq.pid"); rm -f "$TMPFILE"; rm -rf "$TMPDIR"' EXIT
 
-root_wg_ip=$("$my_path"/0vpn-resolve "$root_name")
+root_wg_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_SERVER_NAME")
 echo root wg ip: "$root_wg_ip"
 
-echo "$root_wg_ip" "$root_name".internal > "$TMPDIR"/hosts/"$root_name"
+echo "$root_wg_ip" "$ZEROVPN_SERVER_NAME".internal > "$TMPDIR"/hosts/"$ZEROVPN_SERVER_NAME"
 
-echo Setting up wireguard device "$device"...
-echo Deleting device..."$(ip link delete "$device")"
-ip link add "$device" type wireguard
-ip addr add "$root_wg_ip" dev "$device"
-"$my_path"/0vpn-tool mixin "$keyfile" "$root_name" > "$TMPFILE"
+echo Setting up wireguard device "$ZEROVPN_WIREGUARD_DEVICE"...
+echo Deleting device..."$(ip link delete "$ZEROVPN_WIREGUARD_DEVICE")"
+ip link add "$ZEROVPN_WIREGUARD_DEVICE" type wireguard
+ip addr add "$root_wg_ip" dev "$ZEROVPN_WIREGUARD_DEVICE"
+"$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME" > "$TMPFILE"
 
 echo Root public key: "$(wg pubkey < "$TMPFILE")"
 
-wg set "$device" private-key "$TMPFILE"
-wg set "$device" listen-port "$root_public_port"
-ip link set "$device" up
+wg set "$ZEROVPN_WIREGUARD_DEVICE" private-key "$TMPFILE"
+wg set "$ZEROVPN_WIREGUARD_DEVICE" listen-port "$ZEROVPN_WIREGUARD_PORT"
+ip link set "$ZEROVPN_WIREGUARD_DEVICE" up
 
-echo Output of wg show "$device":
-wg show "$device"
+echo Output of wg show "$ZEROVPN_WIREGUARD_DEVICE":
+wg show "$ZEROVPN_WIREGUARD_DEVICE"
 
 echo Adding route...
-ip route add 10.123.0.0/16 dev "$device"
+ip route add "$ZEROVPN_NETWORK" dev "$ZEROVPN_WIREGUARD_DEVICE"
 
 echo Setting up static leafs...
-for leaf in $static_leafs; do
+for leaf in $ZEROVPN_STATIC_CLIENTS; do
     echo "  Leaf: $leaf"
-    leaf_private=$("$my_path"/0vpn-tool mixin "$keyfile" "$leaf")
+    leaf_private=$("$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$leaf")
   	leaf_public=$(echo "$leaf_private" | wg pubkey)
   	leaf_wg_ip=$("$my_path"/0vpn-resolve "$leaf")
   
     echo "    $leaf public key: $leaf_public"
     echo "    $leaf VPN IP: $leaf_wg_ip"
   
-  	wg set "$device" peer "$leaf_public" persistent-keepalive 10 allowed-ips "$leaf_wg_ip"
-  	# wg set $device peer $leaf_public persistent-keepalive 10 allowed-ips 10.0.0.0/8
+  	wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$leaf_public" persistent-keepalive 10 allowed-ips "$leaf_wg_ip"
+  	# wg set $ZEROVPN_WIREGUARD_DEVICE peer $leaf_public persistent-keepalive 10 allowed-ips 10.0.0.0/8
   
     leaf_config="$TMPDIR"/configs/"$leaf".conf
   
@@ -76,20 +69,20 @@ for leaf in $static_leafs; do
         echo '[Peer]' 
         echo "PublicKey = $(wg pubkey < "$TMPFILE")" 
         echo "AllowedIps = 10.123.0.0/16" 
-        echo "Endpoint = $root_public_host:$root_public_port" 
+        echo "Endpoint = $ZEROVPN_SERVER_HOSTNAME:$ZEROVPN_WIREGUARD_PORT" 
         echo "PersistentKeepalive = 10" 
     } > "$leaf_config"
     echo "    Creating hosts entry..."
     echo "$leaf_wg_ip" "$leaf.internal" > "$TMPDIR"/hosts/"$leaf"
 done
 
-echo Starting dnsmasq on port "$dns_port"...
+echo Starting dnsmasq on port "$ZEROVPN_DNS_PORT"...
 touch "$TMPDIR/dnsmasq.conf"
-dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p "$dns_port" --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$device"
+dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p "$ZEROVPN_DNS_PORT" --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$ZEROVPN_WIREGUARD_DEVICE"
 
 
 echo Listening for dynamic nodes...
 while true; do
-  	"$my_path"/0vpn-handle-leaf-announcements "$device" "$keyfile" "$root_public_announce_port" "$TMPDIR"
+  	"$my_path"/0vpn-handle-leaf-announcements "$ZEROVPN_WIREGUARD_DEVICE" "$ZEROVPN_KEYFILE" "$ZEROVPN_ANNOUNCE_PORT" "$TMPDIR"
 	  sleep 10
 done
