@@ -9,6 +9,7 @@
 
       name = lib.mkOption {
         type = lib.types.str;
+        default = config.networking.hostName;
       };
     };
 
@@ -30,7 +31,6 @@
 
     serverName = lib.mkOption {
       type = lib.types.str;
-      default = config.networking.hostName;
     };
 
     key = lib.mkOption {
@@ -94,7 +94,7 @@
         serviceConfig = { Restart = "always"; RestartSec = "1"; };
         unitConfig = { StartLimitIntervalSec = 0; };
         path = [ pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv ];
-        script = "${pkgs.zerovpn}/bin/0vpn-client --wireguard-interface ${config.zerovpn.interface} --keyfile /etc/zerovpn-key --server-name ${config.zerovpn.client.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.wireguardPort} --announce-port ${builtins.toString config.zerovpn.announcePort} --announce-interval ${builtins.toString config.zerovpn.announceInterval} --client-name ${config.zerovpn.client.name} --dns-port ${builtins.toString config.zerovpn.dnsPort}";
+        script = "${pkgs.zerovpn}/bin/0vpn-client --wireguard-interface ${config.zerovpn.interface} --keyfile /etc/zerovpn-key --server-name ${config.zerovpn.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.wireguardPort} --announce-port ${builtins.toString config.zerovpn.announcePort} --announce-interval ${builtins.toString config.zerovpn.announceInterval} --client-name ${config.zerovpn.client.name} --dns-port ${builtins.toString config.zerovpn.dnsPort}";
       };
     })
     (lib.mkIf config.zerovpn.server.enable {
