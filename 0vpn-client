@@ -14,7 +14,7 @@ echo tmpfile: "$TMPFILE"
 trap 'echo Cleaning up...; rm -f "$TMPFILE"' EXIT
 
 echo Setting up wireguard device "$ZEROVPN_WIREGUARD_DEVICE"...
-echo Removing old device... $(ip link delete "$ZEROVPN_WIREGUARD_DEVICE")
+echo Removing old device... "$(ip link delete "$ZEROVPN_WIREGUARD_DEVICE")"
 ip link add "$ZEROVPN_WIREGUARD_DEVICE" type wireguard
 
 leaf_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_CLIENT_NAME")
@@ -29,15 +29,15 @@ rm -f "$TMPFILE"
 
 echo Deriving root keys...
 
-root_private=$("$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME")
-root_public=$(echo $root_private | wg pubkey)
-root_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_SERVER_NAME")
+server_private_key=$("$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME")
+server_public_key=$(echo "$server_private_key" | wg pubkey)
+server_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_SERVER_NAME")
 
-echo Root public key: "$root_public"
-echo Root VPN IP: "$root_ip"
+echo Root public key: "$server_public_key"
+echo Root VPN IP: "$server_ip"
 
 echo Setting up root node endpoint...
-wg set "$ZEROVPN_WIREGUARD_DEVICE" peer $root_public endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips "$ZEROVPN_NETWORK"
+wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$server_public_key" endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips "$ZEROVPN_NETWORK"
 
 echo Output of wg show "$ZEROVPN_WIREGUARD_DEVICE":
 wg show "$ZEROVPN_WIREGUARD_DEVICE"
@@ -45,8 +45,8 @@ wg show "$ZEROVPN_WIREGUARD_DEVICE"
 echo Adding route...
 ip route add "$ZEROVPN_NETWORK" dev "$ZEROVPN_WIREGUARD_DEVICE"
 
-# echo -e "search internal\\nnameserver $root_ip" | resolvconf -a "$ZEROVPN_WIREGUARD_DEVICE"
-resolvectl dns "$ZEROVPN_WIREGUARD_DEVICE" "$root_ip":"$ZEROVPN_DNS_PORT"
+# echo -e "search internal\\nnameserver $server_ip" | resolvconf -a "$ZEROVPN_WIREGUARD_DEVICE"
+resolvectl dns "$ZEROVPN_WIREGUARD_DEVICE" "$server_ip":"$ZEROVPN_DNS_PORT"
 resolvectl domain "$ZEROVPN_WIREGUARD_DEVICE" internal
 
 

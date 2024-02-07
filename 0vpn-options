@@ -2,7 +2,7 @@
 
 # This script is expected to be sourced by the other 0vpn-scripts
 
-if [ "$0" == "$BASH_SOURCE" ]; then
+if [ "$0" == "${BASH_SOURCE[0]}" ]; then
     echo "This script is made to be sourced, not run."
     exit 1
 fi
@@ -18,7 +18,7 @@ ZEROVPN_TLD="internal"
 ZEROVPN_NETWORK="10.123.0.0/16"
 ZEROVPN_WIREGUARD_DEVICE="wg0"
 ZEROVPN_STATIC_CLIENTS=""
-ZEROVPN_NAME="$(hostname --short)"
+ZEROVPN_CLIENT_NAME="$(hostname --short)"
 
 function help {
     echo "Common available options:"
