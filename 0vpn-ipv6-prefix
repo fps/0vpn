@@ -6,5 +6,5 @@ keyfile="$1"
 
 hash=$(sha256sum "$keyfile")
 
-echo fd"$(echo "$hash" | cut -c 1-2)"::"$(echo "$hash" | cut -c 3-4)""$(echo "$hash" | cut -c 5-6)"::"$(echo "$hash" | cut -c 7-8)""$(echo "$hash" | cut -c 9-10)"::"$(echo "$hash" | cut -c 11-12)""$(echo "$hash" | cut -c 13-14)"
+echo fd"$(echo "$hash" | cut -c 1-2)":"$(echo "$hash" | cut -c 3-4)""$(echo "$hash" | cut -c 5-6)":"$(echo "$hash" | cut -c 7-8)""$(echo "$hash" | cut -c 9-10)":"$(echo "$hash" | cut -c 11-12)""$(echo "$hash" | cut -c 13-14)"
 
