@@ -62,7 +62,7 @@ func main() {
 	}
 	if os.Args[1] == "key-from-password" && len(os.Args) == 2 {
 		line, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-		key, err := scrypt.Key([]byte(line), nil, 32768, 8, 1, 32)
+		key, err := scrypt.Key([]byte(line), nil, 1048576, 8, 1, 32)
 		if err != nil {
 			fmt.Println("Failed to derive key")
 			fmt.Println(err)
