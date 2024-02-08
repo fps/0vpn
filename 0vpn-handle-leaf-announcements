@@ -31,8 +31,8 @@ nc -ulkp "$root_public_announce_port" | while read -r line; do
             echo -e -n "\nMatch! adding the leaf: Host: $host  Public key: $leaf_public  IP: $leaf_wg_ip\n"
             wg set "$device" peer "$leaf_public" persistent-keepalive 10 allowed-ips "$leaf_wg_ip","$leaf_wg_ipv6"
             {
-                echo "$leaf_wg_ip" "$host".internal
                 echo "$leaf_wg_ipv6" "$host".internal
+                echo "$leaf_wg_ip" "$host".internal
             } > "$tmpdir"/hosts/"$host"
             kill -1 $(cat "$tmpdir/dnsmasq.pid")
         fi
