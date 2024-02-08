@@ -52,11 +52,12 @@ for leaf in $ZEROVPN_STATIC_CLIENTS; do
     leaf_private=$("$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$leaf")
   	leaf_public=$(echo "$leaf_private" | wg pubkey)
   	leaf_wg_ip=$("$my_path"/0vpn-resolve "$leaf")
+    leaf_wg_ipv6="$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$leaf")"
   
     echo "    $leaf public key: $leaf_public"
     echo "    $leaf VPN IP: $leaf_wg_ip"
   
-  	wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$leaf_public" persistent-keepalive 10 allowed-ips "$leaf_wg_ip"
+  	wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$leaf_public" persistent-keepalive 10 allowed-ips "$leaf_wg_ip","$leaf_wg_ipv6"
   	# wg set $ZEROVPN_WIREGUARD_DEVICE peer $leaf_public persistent-keepalive 10 allowed-ips 10.0.0.0/8
   
     leaf_config="$TMPDIR"/configs/"$leaf".conf
@@ -74,7 +75,10 @@ for leaf in $ZEROVPN_STATIC_CLIENTS; do
         echo "PersistentKeepalive = 10" 
     } > "$leaf_config"
     echo "    Creating hosts entry..."
-    echo "$leaf_wg_ip" "$leaf.internal" > "$TMPDIR"/hosts/"$leaf"
+    {
+      echo "$leaf_wg_ipv6" "$leaf.internal"
+      echo "$leaf_wg_ip" "$leaf.internal"
+    } > "$TMPDIR"/hosts/"$leaf"
 done
 
 echo Starting dnsmasq on port "$ZEROVPN_DNS_PORT"...
