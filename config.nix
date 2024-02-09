@@ -54,7 +54,7 @@
 
     announceInterval = lib.mkOption {
       type = lib.types.int;
-      default = 60;
+      default = 10;
     };
 
     dnsPort = lib.mkOption {
