@@ -20,6 +20,9 @@ ip link add "$ZEROVPN_WIREGUARD_DEVICE" type wireguard
 leaf_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_CLIENT_NAME")
 echo Leaf VPN IP: "$leaf_ip"
 
+leaf_ipv6="$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$ZEROVPN_CLIENT_NAME")"
+echo Leaf VPN IPv6: "$leaf_ipv6"
+
 ip addr add "$leaf_ip" dev "$ZEROVPN_WIREGUARD_DEVICE"
 ip addr add "$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$ZEROVPN_CLIENT_NAME")" dev "$ZEROVPN_WIREGUARD_DEVICE"
 "$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_CLIENT_NAME" > "$TMPFILE"
@@ -38,7 +41,8 @@ echo Root public key: "$server_public_key"
 echo Root VPN IP: "$server_ip"
 
 echo Setting up root node endpoint...
-wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$server_public_key" endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips "$ZEROVPN_NETWORK"
+wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$server_public_key" endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips "$ZEROVPN_NETWORK","$("$my_path"/0vpn-ipv6-prefix "$ZEROVPN_KEYFILE")"::0/64
+
 
 echo Output of wg show "$ZEROVPN_WIREGUARD_DEVICE":
 wg show "$ZEROVPN_WIREGUARD_DEVICE"
