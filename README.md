@@ -113,12 +113,3 @@ Note that some options like <code>--server-name</code> and <code>--client-name</
 
 # Done
 
-# Post Scriptum
-
-The command <code>0vpn-resolve [name]</code> can be used to find out the wireguard IP addresses of other nodes in the network.
-
-<pre>
-$ 0vpn-resolve contabo
-10.123.65.177
-</pre>
-
