@@ -10,7 +10,9 @@ We give up security for convenience:
 * Clients can dynamically announce the wish to partake in the VPN by sending their node name and their (derived) public key. The server listens on an extra UDP port for these announcements.
 * The server can rederive the client's key and check for the correctness of the transmitted public key.
 * If those check out the client's public key is added to the peers list.
-* IP addresses are derived from the node's names in the 10.123.0.0/16 subnet. So they must be unique and there might be collisions which will make stuff not work well.
+* The VPN uses IPv6 exclusively. 
+* The network prefix is derived from the private key by hashing with <code>sha256sum</code>.
+* IP addresses are derived from the node's names via hashing with <code>sha256sum</code> as well. So the names must be unique. If 
 * For non linux clients that only have a "vanilla" wireguard "app" we provide ready to use .cfg files (these are written to the TMPDIR path reported during startup of <code>0vpn-root</code> and can be used with the equivalents of wg-quick.)
 * We run an instance of dnsmasq on the server which resolves clients in the "internal" TLD (the TLD can be configured as well).
 
@@ -97,7 +99,6 @@ Common available options:
   --dns-port [port]                (default: "53")
   --keyfile [filename]             (default: "key")
   --tld [domain-name]              (default: "internal")
-  --network [network-spec]         (default: "10.123.0.0/16")
   --wireguard-device [device-name] (default: "wg0")
 
 Server-only options:
