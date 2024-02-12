@@ -1,12 +1,12 @@
 # 0vpn
 
-An experiment in making a wireguard VPN setup super easy (almost 0-conf). The only supported topology right now is the server-and-clients (a.k.a. root-and-leafs, hub-and-spokes) topology.
+An experiment in making a wireguard VPN setup super easy (almost 0-conf). The only supported topology right now is the server-and-clients (a.k.a. root-and-leafs, hub-and-spokes) topology. This is mainly useful if you just need a VPN for your personal machines and you have a cheap server available on the internet (the smallest virtual private server (VPS) should be fine.) Since all your machines are under your control it is easy to have a shared secret on all of them. This shared secret is a private key from which all other privae and public keys are derived via mixing in names.
 
 ## How does it work?
 
 We give up security for convenience:
 
-* There is a central "master" private key from which all other keys are derived mixing in the nodes' names. This master key can (optionally) be derived from a password/phrase.
+* There is a central "master" private key from which all other keys are derived mixing in the nodes' names. This master key can (optionally) be derived from a password/phrase using <code>0vpn-tool key-from-password > keyfile</code>, which reads the password from <code>stdin</code>.
 * Clients can dynamically announce the wish to partake in the VPN by sending their node name and their (derived) public key. The server listens on an extra UDP port for these announcements.
 * The server can rederive the client's key and check for the correctness of the transmitted public key.
 * If those check out the client's public key is added to the peers list.
