@@ -52,9 +52,8 @@ echo Adding route...
 ip route add "$ZEROVPN_NETWORK" dev "$ZEROVPN_WIREGUARD_DEVICE"
 ip route add "$("$my_path"/0vpn-ipv6-prefix "$ZEROVPN_KEYFILE")"::0/64 dev "$ZEROVPN_WIREGUARD_DEVICE"
 
-# echo -e "search internal\\nnameserver $server_ip" | resolvconf -a "$ZEROVPN_WIREGUARD_DEVICE"
 resolvectl dns "$ZEROVPN_WIREGUARD_DEVICE" "$server_ip":"$ZEROVPN_DNS_PORT" ["$server_ipv6"]:"$ZEROVPN_DNS_PORT"
-resolvectl domain "$ZEROVPN_WIREGUARD_DEVICE" internal
+resolvectl domain "$ZEROVPN_WIREGUARD_DEVICE" "$ZEROVPN_TLD"
 
 
 echo Entering leaf announcement loop...

@@ -15,7 +15,6 @@ ZEROVPN_ANNOUNCE_INTERVAL="10"
 ZEROVPN_DNS_PORT="53"
 ZEROVPN_KEYFILE="key"
 ZEROVPN_TLD="internal"
-ZEROVPN_NETWORK="10.123.0.0/16"
 ZEROVPN_WIREGUARD_DEVICE="wg0"
 ZEROVPN_STATIC_CLIENTS=""
 ZEROVPN_CLIENT_NAME="$(hostname --short)"
@@ -29,7 +28,6 @@ function help {
     echo "  --dns-port [port]                (default: \"$ZEROVPN_DNS_PORT\")"
     echo "  --keyfile [filename]             (default: \"$ZEROVPN_KEYFILE\")"
     echo "  --tld [domain-name]              (default: \"$ZEROVPN_TLD\")"
-    echo "  --network [network-spec]         (default: \"$ZEROVPN_NETWORK\")"
     echo "  --wireguard-device [device-name] (default: \"$ZEROVPN_WIREGUARD_DEVICE\")"
     echo ""
     echo "Server-only options:"
@@ -54,7 +52,6 @@ while true; do
         --dns-port) ZEROVPN_DNS_PORT="$2"; shift 2;;
         --keyfile) ZEROVPN_KEYFILE="$2"; shift 2;;
         --tld) ZEROVPN_TLD="$2"; shift 2;;
-        --network) ZEROVPN_NETWORK="$2"; shift 2;;
         --wireguard-device) ZEROVPN_WIREGUARD_DEVICE="$2"; shift 2;;
         --static-clients) ZEROVPN_STATIC_CLIENTS="$2"; shift 2;;
         --client-name) ZEROVPN_CLIENT_NAME="$2"; shift 2;;
@@ -64,18 +61,5 @@ while true; do
     esac
 done
 
-#export ZEROVPN_SERVER_HOSTNAME
-#export ZEROVPN_SERVER_NAME
-#export ZEROVPN_WIREGUARD_PORT
-#export ZEROVPN_ANNOUNCE_PORT
-#export ZEROVPN_ANNOUNCE_INTERVAL
-#export ZEROVPN_DNS_PORT
-#export ZEROVPN_KEYFILE
-#export ZEROVPN_TLD
-#export ZEROVPN_NETWORK
-#export ZEROVPN_WIREGUARD_DEVICE
-#export ZEROVPN_STATIC_CLIENTS
-#export ZEROVPN_CLIENT_NAME
-#
 echo "Configuration:"
 for n in "${!ZEROVPN_@}"; do echo "  $n=${!n}"; done
