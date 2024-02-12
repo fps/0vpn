@@ -76,7 +76,7 @@ for client in $ZEROVPN_STATIC_CLIENTS; do
     } > "$client_config"
     echo "    Creating hosts entry..."
     {
-      echo "$client_wg_ipv6" "$client."$ZEROVPN_TLD""
+      echo "$client_wg_ipv6" "$client"."$ZEROVPN_TLD"
     } > "$TMPDIR"/hosts/"$client"
 done
 
@@ -87,6 +87,6 @@ dnsmasq --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts"
 
 echo Listening for dynamic nodes...
 while true; do
-  	"$my_path"/0vpn-handle-client-announcements "$ZEROVPN_WIREGUARD_DEVICE" "$ZEROVPN_KEYFILE" "$ZEROVPN_ANNOUNCE_PORT" "$TMPDIR"
+  	"$my_path"/0vpn-handle-client-announcements "$ZEROVPN_WIREGUARD_DEVICE" "$ZEROVPN_KEYFILE" "$ZEROVPN_ANNOUNCE_PORT" "$TMPDIR" "$ZEROVPN_TLD"
 	  sleep 10
 done
