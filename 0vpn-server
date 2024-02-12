@@ -22,21 +22,18 @@ chmod -R 755 "$TMPDIR"
 
 trap 'kill $(cat "$TMPDIR/dnsmasq.pid"); rm -f "$TMPFILE"; rm -rf "$TMPDIR"' EXIT
 
-root_wg_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_SERVER_NAME")
-echo root wg ip: "$root_wg_ip"
 
-root_wg_ipv6="$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME")" 
+server_wg_ipv6="$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME")" 
+echo server wg ipv6: "$server_wg_ipv6"
 
 {
-    echo "$root_wg_ip" "$ZEROVPN_SERVER_NAME"."$ZEROVPN_TLD"
-    echo "$root_wg_ipv6" "$ZEROVPN_SERVER_NAME"."$ZEROVPN_TLD"
+    echo "$server_wg_ipv6" "$ZEROVPN_SERVER_NAME"."$ZEROVPN_TLD"
 } > "$TMPDIR"/hosts/"$ZEROVPN_SERVER_NAME"
 
 echo Setting up wireguard device "$ZEROVPN_WIREGUARD_DEVICE"...
 echo Deleting device..."$(ip link delete "$ZEROVPN_WIREGUARD_DEVICE")"
 ip link add "$ZEROVPN_WIREGUARD_DEVICE" type wireguard
-ip addr add "$root_wg_ip" dev "$ZEROVPN_WIREGUARD_DEVICE"
-ip addr add "$root_wg_ipv6" dev "$ZEROVPN_WIREGUARD_DEVICE"
+ip addr add "$server_wg_ipv6" dev "$ZEROVPN_WIREGUARD_DEVICE"
 "$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME" > "$TMPFILE"
 
 echo Root public key: "$(wg pubkey < "$TMPFILE")"
@@ -49,7 +46,6 @@ echo Output of wg show "$ZEROVPN_WIREGUARD_DEVICE":
 wg show "$ZEROVPN_WIREGUARD_DEVICE"
 
 echo Adding route...
-ip route add "$ZEROVPN_NETWORK" dev "$ZEROVPN_WIREGUARD_DEVICE"
 ip route add "$("$my_path"/0vpn-ipv6-prefix "$ZEROVPN_KEYFILE")"::0/64 dev "$ZEROVPN_WIREGUARD_DEVICE"
 
 echo Setting up static clients...
@@ -57,13 +53,12 @@ for client in $ZEROVPN_STATIC_CLIENTS; do
     echo "  Leaf: $client"
     client_private=$("$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$client")
   	client_public=$(echo "$client_private" | wg pubkey)
-  	client_wg_ip=$("$my_path"/0vpn-resolve "$client")
     client_wg_ipv6="$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$client")"
   
     echo "    $client public key: $client_public"
-    echo "    $client VPN IP: $client_wg_ip"
+    echo "    $client VPN IPv6: $client_wg_ipv6"
   
-  	wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$client_public" persistent-keepalive 10 allowed-ips "$client_wg_ip","$client_wg_ipv6"
+  	wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$client_public" persistent-keepalive 10 allowed-ips "$client_wg_ipv6"
   
     client_config="$TMPDIR"/configs/"$client".conf
   
@@ -71,8 +66,8 @@ for client in $ZEROVPN_STATIC_CLIENTS; do
     {
         echo '[Interface]' 
         echo "PrivateKey = $client_private" 
-        echo "Address = $client_wg_ip" 
-        echo "DNS = $root_wg_ip, "$ZEROVPN_TLD"" 
+        echo "Address = $client_wg_ipv6" 
+        echo "DNS = $server_wg_ipv6, "$ZEROVPN_TLD"" 
         echo '[Peer]' 
         echo "PublicKey = $(wg pubkey < "$TMPFILE")" 
         echo "AllowedIps = 10.123.0.0/16" 
@@ -82,7 +77,6 @@ for client in $ZEROVPN_STATIC_CLIENTS; do
     echo "    Creating hosts entry..."
     {
       echo "$client_wg_ipv6" "$client."$ZEROVPN_TLD""
-      echo "$client_wg_ip" "$client."$ZEROVPN_TLD""
     } > "$TMPDIR"/hosts/"$client"
 done
 
