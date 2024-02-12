@@ -6,8 +6,6 @@ my_path=$(dirname "$0")
 
 source "$my_path"/0vpn-options
 
-set +v
-
 echo Creating temporary file...
 TMPFILE=$(mktemp) || exit 1
 echo tmpfile: "$TMPFILE"
@@ -17,13 +15,9 @@ echo Setting up wireguard device "$ZEROVPN_WIREGUARD_DEVICE"...
 echo Removing old device... "$(ip link delete "$ZEROVPN_WIREGUARD_DEVICE")"
 ip link add "$ZEROVPN_WIREGUARD_DEVICE" type wireguard
 
-leaf_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_CLIENT_NAME")
-echo Leaf VPN IP: "$leaf_ip"
-
 leaf_ipv6="$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$ZEROVPN_CLIENT_NAME")"
 echo Leaf VPN IPv6: "$leaf_ipv6"
 
-ip addr add "$leaf_ip" dev "$ZEROVPN_WIREGUARD_DEVICE"
 ip addr add "$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$ZEROVPN_CLIENT_NAME")" dev "$ZEROVPN_WIREGUARD_DEVICE"
 "$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_CLIENT_NAME" > "$TMPFILE"
 wg set "$ZEROVPN_WIREGUARD_DEVICE" private-key "$TMPFILE"
@@ -35,24 +29,22 @@ echo Deriving root keys...
 
 server_private_key=$("$my_path"/0vpn-tool mixin "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME")
 server_public_key=$(echo "$server_private_key" | wg pubkey)
-server_ip=$("$my_path"/0vpn-resolve "$ZEROVPN_SERVER_NAME")
 server_ipv6="$("$my_path"/0vpn-ipv6-address "$ZEROVPN_KEYFILE" "$ZEROVPN_SERVER_NAME")"
 
 echo Root public key: "$server_public_key"
-echo Root VPN IP: "$server_ip"
+echo Root VPN IPv6: "$server_ipv6"
 
 echo Setting up root node endpoint...
-wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$server_public_key" endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips "$ZEROVPN_NETWORK","$("$my_path"/0vpn-ipv6-prefix "$ZEROVPN_KEYFILE")"::0/64
+wg set "$ZEROVPN_WIREGUARD_DEVICE" peer "$server_public_key" endpoint "$ZEROVPN_SERVER_HOSTNAME":"$ZEROVPN_WIREGUARD_PORT" persistent-keepalive 10 allowed-ips "$("$my_path"/0vpn-ipv6-prefix "$ZEROVPN_KEYFILE")"::0/64
 
 
 echo Output of wg show "$ZEROVPN_WIREGUARD_DEVICE":
 wg show "$ZEROVPN_WIREGUARD_DEVICE"
 
 echo Adding route...
-ip route add "$ZEROVPN_NETWORK" dev "$ZEROVPN_WIREGUARD_DEVICE"
 ip route add "$("$my_path"/0vpn-ipv6-prefix "$ZEROVPN_KEYFILE")"::0/64 dev "$ZEROVPN_WIREGUARD_DEVICE"
 
-resolvectl dns "$ZEROVPN_WIREGUARD_DEVICE" "$server_ip":"$ZEROVPN_DNS_PORT" ["$server_ipv6"]:"$ZEROVPN_DNS_PORT"
+resolvectl dns "$ZEROVPN_WIREGUARD_DEVICE" ["$server_ipv6"]:"$ZEROVPN_DNS_PORT"
 resolvectl domain "$ZEROVPN_WIREGUARD_DEVICE" "$ZEROVPN_TLD"
 
 
