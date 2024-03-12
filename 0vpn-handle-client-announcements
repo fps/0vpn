@@ -22,14 +22,13 @@ nc -ulkp "$root_public_announce_port" | while read -r line; do
     client_private=$("$my_path"/0vpn-tool mixin "$keyfile" "$host")
     # echo "    Private: $client_private"
     client_public=$(echo "$client_private" | wg pubkey)
-    client_wg_ip=$("$my_path"/0vpn-resolve "$host")
     client_wg_ipv6="$("$my_path"/0vpn-ipv6-address "$keyfile" "$host")"
     # echo "    Public: $client_public  Leaf IP: $client_wg_ip"
 
     # echo "  Checking if they match:"
     if [ "$public" == "$client_public" ]; then 
         if [ ! -f "$tmpdir"/hosts/"$host" ]; then
-            echo -e -n "\nMatch! adding the client: Host: $host  Public key: $client_public  IP: $client_wg_ip\n"
+            echo -e -n "\nMatch! adding the client: Host: $host  Public key: $client_public  IP: $client_wg_ipv6\n"
             wg set "$device" peer "$client_public" persistent-keepalive 10 allowed-ips "$client_wg_ipv6"
             {
                 echo "$client_wg_ipv6" "$host"."$tld"

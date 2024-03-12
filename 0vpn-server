@@ -70,7 +70,7 @@ for client in $ZEROVPN_STATIC_CLIENTS; do
         echo "DNS = $server_wg_ipv6, "$ZEROVPN_TLD"" 
         echo '[Peer]' 
         echo "PublicKey = $(wg pubkey < "$TMPFILE")" 
-        echo "AllowedIps = 10.123.0.0/16" 
+        echo "AllowedIps = $("$my_path"/0vpn-ipv6-prefix "$ZEROVPN_KEYFILE")::0/64" 
         echo "Endpoint = $ZEROVPN_SERVER_HOSTNAME:$ZEROVPN_WIREGUARD_PORT" 
         echo "PersistentKeepalive = 10" 
     } > "$client_config"

@@ -1,16 +1,18 @@
 # 0vpn
 
-An experiment in making a wireguard VPN setup super easy (almost 0-conf). The only supported topology right now is the server-and-clients (a.k.a. root-and-leafs, hub-and-spokes) topology.
+An experiment in making a wireguard VPN setup super easy (almost 0-conf). The only supported topology right now is the server-and-clients (a.k.a. root-and-leafs, hub-and-spokes) topology. This is mainly useful if you just need a VPN for your personal machines and you have a cheap server available on the internet (the smallest virtual private server (VPS) should be fine.) Since all your machines are under your control it is easy to have a shared secret on all of them. This shared secret is a private key from which all other privae and public keys are derived via mixing in names.
 
 ## How does it work?
 
 We give up security for convenience:
 
-* There is a central "master" private key from which all other keys are derived mixing in the nodes' names. This master key can (optionally) be derived from a password/phrase.
+* There is a central "master" private key from which all other keys are derived mixing in the nodes' names. This master key can (optionally) be derived from a password/phrase using <code>0vpn-tool key-from-password > keyfile</code>, which reads the password from <code>stdin</code>.
 * Clients can dynamically announce the wish to partake in the VPN by sending their node name and their (derived) public key. The server listens on an extra UDP port for these announcements.
 * The server can rederive the client's key and check for the correctness of the transmitted public key.
 * If those check out the client's public key is added to the peers list.
-* IP addresses are derived from the node's names in the 10.123.0.0/16 subnet. So they must be unique and there might be collisions which will make stuff not work well.
+* The VPN uses IPv6 exclusively. 
+* The network prefix is derived from the private key by hashing with <code>sha256sum</code>.
+* IP addresses are derived from the node's names via hashing with <code>sha256sum</code> as well. So the names must be unique. If 
 * For non linux clients that only have a "vanilla" wireguard "app" we provide ready to use .cfg files (these are written to the TMPDIR path reported during startup of <code>0vpn-root</code> and can be used with the equivalents of wg-quick.)
 * We run an instance of dnsmasq on the server which resolves clients in the "internal" TLD (the TLD can be configured as well).
 
@@ -97,7 +99,6 @@ Common available options:
   --dns-port [port]                (default: "53")
   --keyfile [filename]             (default: "key")
   --tld [domain-name]              (default: "internal")
-  --network [network-spec]         (default: "10.123.0.0/16")
   --wireguard-device [device-name] (default: "wg0")
 
 Server-only options:
@@ -111,13 +112,4 @@ Client-only options:
 Note that some options like <code>--server-name</code> and <code>--client-name</code> are set to <code>$(hostname --short)</code> per default (in this case <code>ogfx100</code>). 
 
 # Done
-
-# Post Scriptum
-
-The command <code>0vpn-resolve [name]</code> can be used to find out the wireguard IP addresses of other nodes in the network.
-
-<pre>
-$ 0vpn-resolve contabo
-10.123.65.177
-</pre>
 
