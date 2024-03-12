@@ -34,7 +34,8 @@
     };
 
     key = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.path;
+      default = "/etc/nixos/zerovpn-master-key";
     };
 
     wireguardDevice = lib.mkOption {
@@ -74,13 +75,6 @@
   
       users.groups.zerovpn = { };    
   
-      environment.etc.zerovpn-key = {
-        text = config.zerovpn.key;
-        mode = "0600";
-        user = "zerovpn";
-        group = "zerovpn";
-      };
-
       environment.systemPackages = [ pkgs.zerovpn ];
     })
     (lib.mkIf config.zerovpn.client.enable {
@@ -94,7 +88,7 @@
         serviceConfig = { Restart = "always"; RestartSec = "1"; };
         unitConfig = { StartLimitIntervalSec = 0; };
         path = [ pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv pkgs.hostname ];
-        script = "${pkgs.zerovpn}/bin/0vpn-client --wireguard-device ${config.zerovpn.wireguardDevice} --keyfile /etc/zerovpn-key --server-name ${config.zerovpn.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.wireguardPort} --announce-port ${builtins.toString config.zerovpn.announcePort} --announce-interval ${builtins.toString config.zerovpn.announceInterval} --client-name ${config.zerovpn.client.name} --dns-port ${builtins.toString config.zerovpn.dnsPort}";
+        script = "${pkgs.zerovpn}/bin/0vpn-client --wireguard-device ${config.zerovpn.wireguardDevice} --keyfile ${config.zerovpn.key} --server-name ${config.zerovpn.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.wireguardPort} --announce-port ${builtins.toString config.zerovpn.announcePort} --announce-interval ${builtins.toString config.zerovpn.announceInterval} --client-name ${config.zerovpn.client.name} --dns-port ${builtins.toString config.zerovpn.dnsPort}";
       };
     })
     (lib.mkIf config.zerovpn.server.enable {
@@ -109,7 +103,7 @@
         serviceConfig = { Restart = "always"; RestartSec = "1"; };
         unitConfig = { StartLimitIntervalSec = 0; };
         path = [ pkgs.wireguard-tools pkgs.netcat-openbsd pkgs.iproute2 pkgs.zerovpn pkgs.openresolv pkgs.dnsmasq pkgs.hostname ];
-        script = "${pkgs.zerovpn}/bin/0vpn-server --wireguard-device ${config.zerovpn.wireguardDevice} --keyfile /etc/zerovpn-key --server-name ${config.zerovpn.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.wireguardPort} --announce-port ${builtins.toString config.zerovpn.announcePort} --static-clients " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"" + " --dns-port ${builtins.toString config.zerovpn.dnsPort}";
+        script = "${pkgs.zerovpn}/bin/0vpn-server --wireguard-device ${config.zerovpn.wireguardDevice} --keyfile ${config.zerovpn.key} --server-name ${config.zerovpn.serverName} --server-hostname ${config.zerovpn.serverHost} --wireguard-port ${builtins.toString config.zerovpn.wireguardPort} --announce-port ${builtins.toString config.zerovpn.announcePort} --static-clients " + "\"" + (lib.concatStringsSep " " config.zerovpn.server.staticClients) + "\"" + " --dns-port ${builtins.toString config.zerovpn.dnsPort}";
       };
     })
     ];
