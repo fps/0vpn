@@ -83,7 +83,7 @@ done
 
 echo Starting dnsmasq on port "$ZEROVPN_DNS_PORT"...
 touch "$TMPDIR/dnsmasq.conf"
-dnsmasq -q --expand-hosts --domain-needed --bogus-priv --domain=internal --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p "$ZEROVPN_DNS_PORT" --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$ZEROVPN_WIREGUARD_DEVICE"
+dnsmasq --expand-hosts --domain-needed --bogus-priv --domain=internal --pid-file="$TMPDIR/dnsmasq.pid" --no-hosts --addn-hosts="$TMPDIR/hosts" -p "$ZEROVPN_DNS_PORT" --conf-file="$TMPDIR"/dnsmasq.conf --log-facility=- --interface="$ZEROVPN_WIREGUARD_DEVICE"
 
 
 echo Listening for dynamic nodes...
