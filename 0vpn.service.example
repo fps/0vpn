@@ -6,7 +6,7 @@ ExecStart=/bin/bash ./0vpn-client --server-hostname [your server hostname here] 
 RestartSec=1
 WorkingDirectory=[path to 0vpn scripts here]
 StartLimitIntervalSec=0
+After=multi-user.target
 
 [Install]
 WantedBy=multi-user.target
-
