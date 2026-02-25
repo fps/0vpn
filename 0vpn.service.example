@@ -4,7 +4,7 @@ Description=zerovpn client
 [Service]
 ExecStart=/bin/bash ./0vpn-client --server-hostname [your server hostname here] --server-name [your server name here] --keyfile [your keyfile here]
 RestartSec=1
-WorkingDirectory=/home/fps/src/0vpn
+WorkingDirectory=[path to 0vpn scripts here]
 StartLimitIntervalSec=0
 
 [Install]
